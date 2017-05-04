@@ -194,6 +194,9 @@ let g:ctrlp_cmd = 'CtrlP'
 "NERDtree
 "Chagge the default mapping
 map <C-n> :NERDTreeToggle<CR>
+
+"Filter out files by extension
+let NERDTreeIgnore = ['\.pyc$', 'htmlcov', '__pycache__']
 "NERDtree end
 
 "NERDtree git-plugin
