@@ -127,6 +127,14 @@ set cursorline              " have a line indicate the cursor location"
 
 set showcmd                 " show pressed command in the button right corner
 
+" set abbreviation for pdb
+:ab pdb import pdb; pdb.set_trace()
+
+" ack.vim
+" Don't jump to the first result automatically
+cnoreabbrev Ack Ack!
+" end ack.vim
+
 " airline
 " activate powerline fonts
 let g:airline_powerline_fonts = 1
