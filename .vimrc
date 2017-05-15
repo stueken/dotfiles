@@ -85,6 +85,9 @@ set backspace=indent,eol,start  " Backspace won't delete over line breaks
 """ Commands
 set history=100  " Remember more commands (default=8)
 
+""" Swap files
+set directory^=$HOME/.vim/tmp//  " Organize swap files
+
 """ Keybindings and Abbreviations - leader key is \ by default 
 map <leader>rr :source ~/.vimrc<CR>   " Reload vim configuruation file 
 nnoremap <C-J> <C-W><C-J>             " Ctrl-j to move down a split
