@@ -9,7 +9,6 @@ call vundle#begin()                 " Initialize Vundle
 Plugin 'VundleVim/Vundle.vim'       " Let Vundle manage Vundle, required 
 
 """ Styling
-" Plugin 'altercation/vim-colors-solarized' " solarized Colorscheme
 Plugin 'chriskempson/base16-vim'          " base16 Colorscheme
 Plugin 'vim-airline/vim-airline'          " status/tabline  
 Plugin 'vim-airline/vim-airline-themes'   " themes for airline
@@ -144,14 +143,6 @@ set noshowmode      " Hide the default mode text (e.g. INSERT below statusline)
 let g:airline#extensions#tabline#enabled = 1  " Display buffers when 1 tab open
 let g:tmuxline_powerline_separators = 0  " Set straigt tmux powerline separators 
 
-
-" ==============================================================================
-" Color Theme Solarized
-" ============================================================================== 
-
-" syntax enable
-" set background=dark  " Alternative: light
-" colorscheme solarized
 
 " ==============================================================================
 " Color Theme base16
