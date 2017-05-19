@@ -88,11 +88,16 @@ set history=100  " Remember more commands (default=8)
 set directory^=$HOME/.vim/tmp//  " Organize swap files
 
 """ Keybindings and Abbreviations - leader key is \ by default 
-map <leader>rr :source ~/.vimrc<CR>   " Reload vim configuruation file 
-nnoremap <C-J> <C-W><C-J>             " Ctrl-j to move down a split
-nnoremap <C-K> <C-W><C-K>             " Ctrl-k to move up a split
-nnoremap <C-L> <C-W><C-L>             " Ctrl-l to move right a split
-nnoremap <C-H> <C-W><C-H>             " Ctrl-h to move left a split
+" Reload vim configuruation file
+map <leader>rrr:source ~/.vimrc<CR>
+" Ctrl-j to move down a split
+nnoremap <C-J> <C-W><C-J>
+" Ctrl-k to move up a split
+nnoremap <C-K> <C-W><C-K>
+" Ctrl-l to move right a split
+nnoremap <C-L> <C-W><C-L>
+" Ctrl-h to move left a split
+nnoremap <C-H> <C-W><C-H>
 " Set abbreviation for pdb
 :ab pdb import pdb; pdb.set_trace()
 
