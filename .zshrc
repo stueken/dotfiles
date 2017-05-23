@@ -81,6 +81,9 @@ source $ZSH/oh-my-zsh.sh
 # Load virtualenvwrapper commands
 source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 
+# Initialize pew
+source $(pew shell_config)
+
 # dircolors path
 # eval `dircolors $HOME/.dir_colors/dircolors`
 
