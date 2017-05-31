@@ -51,7 +51,7 @@ ZSH_THEME="robbyrussell"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git virtualenv history-substring-search web-search)
 
-export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/packer:$HOME/.rvm/bin:$HOME/.local/bin:/usr/bin"
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/packer:$HOME/.local/bin:/usr/bin"
 
 # User configuration
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -88,6 +88,15 @@ export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/coding/projects
 export VIRTUALENVWRAPPER_PYTHON='/usr/bin/python'
 source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
+
+# Ruby
+source ~/.rvm/scripts/rvm  # Initialize RVM (Ruby Version Manager)
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM (Ruby Version Manager) to PATH for scripting
+
+# PYENV
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH" 
+eval "$(pyenv init -)"        
 
 # Initialize pew
 source $(pew shell_config)
