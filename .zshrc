@@ -86,7 +86,7 @@ source $ZSH/oh-my-zsh.sh
 # Load virtualenvwrapper commands
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/coding/projects
-export VIRTUALENVWRAPPER_PYTHON='/usr/bin/python'
+# export VIRTUALENVWRAPPER_PYTHON='/usr/bin/python3'
 source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 
 # Ruby
