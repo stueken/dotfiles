@@ -49,9 +49,10 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git virtualenv history-substring-search web-search)
+# plugins=(git virtualenv history-substring-search web-search)
+plugins=(git history-substring-search web-search)
 
-export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/packer:$HOME/.local/bin:/usr/bin"
+# export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/packer:$HOME/.local/bin:/usr/bin"
 
 # User configuration
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -84,21 +85,22 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # Load virtualenvwrapper commands
-export WORKON_HOME=$HOME/.virtualenvs
-export PROJECT_HOME=$HOME/coding/projects
+# export WORKON_HOME=$HOME/.virtualenvs
+# export PROJECT_HOME=$HOME/coding/projects
 # export VIRTUALENVWRAPPER_PYTHON='/usr/bin/python3'
-source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
+# source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 
 # Ruby
 source ~/.rvm/scripts/rvm  # Initialize RVM (Ruby Version Manager)
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM (Ruby Version Manager) to PATH for scripting
+export PATH="$HOME/.rvm/bin:$PATH" # Add RVM (Ruby Version Manager) to PATH for scripting
 
 # PYENV
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH" 
-eval "$(pyenv init -)"        
+# export PYENV_ROOT="$HOME/.pyenv"
+# export PATH="$PYENV_ROOT/bin:$PATH"
+# eval "$(pyenv init -)"
 
 # Initialize pew
+export PATH="$HOME/.local/bin/:$PATH"  # pipsi
 source $(pew shell_config)
 
 # dircolors path
