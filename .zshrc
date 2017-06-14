@@ -101,6 +101,7 @@ export PATH="$HOME/.rvm/bin:$PATH" # Add RVM (Ruby Version Manager) to PATH for 
 
 # Initialize pew
 export PATH="$HOME/.local/bin/:$PATH"  # pipsi
+export WORKON_HOME=$HOME/.virtualenvs
 source $(pew shell_config)
 
 # dircolors path
