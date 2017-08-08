@@ -85,19 +85,18 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # Load virtualenvwrapper commands
-# export WORKON_HOME=$HOME/.virtualenvs
-# export PROJECT_HOME=$HOME/coding/projects
-# export VIRTUALENVWRAPPER_PYTHON='/usr/bin/python3'
-# source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
+export WORKON_HOME=$HOME/.virtualenvs
+export PROJECT_HOME=$HOME/coding/projects
+export VIRTUALENVWRAPPER_PYTHON='/usr/bin/python3'
+source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 
 # Ruby
 source ~/.rvm/scripts/rvm  # Initialize RVM (Ruby Version Manager)
 export PATH="$HOME/.rvm/bin:$PATH" # Add RVM (Ruby Version Manager) to PATH for scripting
 
-# PYENV
-# export PYENV_ROOT="$HOME/.pyenv"
-# export PATH="$PYENV_ROOT/bin:$PATH"
-# eval "$(pyenv init -)"
+# Set environment variables for pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
 
 # Initialize pew
 export PATH="$HOME/.local/bin/:$PATH"  # pipsi
@@ -121,3 +120,6 @@ alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
 # Tell Python not to create byte code (__pycache__ folders and .pyc files)
 export PYTHONDONTWRITEBYTECODE=1
+
+# Initialize pyenv
+eval "$(pyenv init -)"
