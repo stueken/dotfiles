@@ -1,0 +1,40 @@
+[alias]
+    workprofile = config user.email \"norbert.stueken@jonasundderwolf.de\"
+[branch]
+    autosetuprebase = always
+[core]
+    editor = vim
+[diff]
+    # tool = p4merge
+[difftool]
+    prompt = false
+[difftool "meld3"]
+    cmd = meld3 "$LOCAL" "$REMOTE"
+    keepBackup = false
+    keepTemporaries = false
+    trustExitCode = false
+[merge]
+    keepBackup = false;
+    tool = meld3
+[mergetool]
+    prompt = false
+[mergetool "p4merge"]
+    cmd = p4merge "$BASE" "$LOCAL" "$REMOTE" "$MERGED"
+    keepBackup = false
+    keepTemporaries = false
+    trustExitCode = false
+[push]
+    default = tracking
+[pull]
+    rebase = true
+[rebase]
+    autostash = true
+[url "https://bitbucket.org/"]
+    insteadOf = bb:
+[url "https://github.com/"]
+    insteadOf = gh:
+[url "https://gist.github.com/"]
+    insteadOf = gist:
+[user]
+    email = norbert.stueken@nrbrt.com
+    name = Norbert Stüken
