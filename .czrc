@@ -1,0 +1,3 @@
+# path to the preferred, globally installd, commitizen adapter
+{ "path": "cz-conventional-changelog" }
+
