@@ -75,8 +75,8 @@ set showcmd     " show pressed command in the button right corner
  
 """ Spaces & Tabs
 set expandtab     " Insert space characters whenever tab is pressed
-set tabstop=2     " # of spaces to be inserted when tab is pressed
-set shiftwidth=2  " # of spaces to use fore each step of (auto)indent
+set tabstop=4     " # of spaces to be inserted when tab is pressed
+set shiftwidth=4  " # of spaces to use fore each step of (auto)indent
 
 """ Editing
 set backspace=indent,eol,start  " Backspace won't delete over line breaks 
