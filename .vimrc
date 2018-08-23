@@ -79,6 +79,8 @@ set wildignore=*.o,*.obj,*.bak,*.exe,*.py[co],*.swp,*~,*.pyc,.svn  " Ignore exte
 set expandtab     " Insert space characters whenever tab is pressed
 set tabstop=4     " # of spaces to be inserted when tab is pressed
 set shiftwidth=4  " # of spaces to use fore each step of (auto)indent
+set list
+set list listchars=tab:→·,trail:·,eol:¬,extends:⇉,precedes:⇇
 
 """ Editing
 set backspace=indent,eol,start  " Backspace won't delete over line breaks 
