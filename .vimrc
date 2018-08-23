@@ -68,11 +68,12 @@ filetype plugin indent on    " Enable language-dependent indenting, required
 " ==============================================================================
 
 """ Display
-syntax on       " Switch syntax highlighting on
-set cursorline  " have a line indicate the cursor location
-set number      " Show line numbers
-set showcmd     " show pressed command in the button right corner
- 
+syntax on              " Switch syntax highlighting on
+set cursorline         " Have a line indicate the cursor location
+set colorcolumn=80,90  " Show verticle bar after 80 and 90 chars
+set number             " Show line numbers
+set showcmd            " Show pressed command in the button right corner
+
 """ Spaces & Tabs
 set expandtab     " Insert space characters whenever tab is pressed
 set tabstop=4     " # of spaces to be inserted when tab is pressed
