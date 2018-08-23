@@ -1,5 +1,6 @@
 [alias]
     workprofile = config user.email \"norbert.stueken@jonasundderwolf.de\"
+    please = push --force-with-lease
 [branch]
     autosetuprebase = always
 [core]
