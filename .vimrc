@@ -190,7 +190,7 @@ let g:NERDTrimTrailingWhitespace = 1  " Trim trailing whitespace when uncomment
 map <C-n> :NERDTreeToggle<CR>  " Change the default mapping
  
 " Filter out files by extension
-let NERDTreeIgnore = ['\.pyc$', 'htmlcov', '__pycache__']
+let NERDTreeIgnore = ['\.pyc$', 'htmlcov', '__pycache__', '\.orig$']
 
 
 " ==============================================================================
