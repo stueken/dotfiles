@@ -6,21 +6,21 @@
 [core]
     editor = vim
 [diff]
-    # tool = p4merge
+    tool = meld
 [difftool]
     prompt = false
-[difftool "meld3"]
-    cmd = meld3 "$LOCAL" "$REMOTE"
+[difftool "meld"]
+    cmd = meld "$LOCAL" "$REMOTE"
     keepBackup = false
     keepTemporaries = false
     trustExitCode = false
 [merge]
-    keepBackup = false;
-    tool = meld3
+    tool = meld
 [mergetool]
     prompt = false
-[mergetool "p4merge"]
-    cmd = p4merge "$BASE" "$LOCAL" "$REMOTE" "$MERGED"
+[mergetool "meld"]
+    cmd = meld "$LOCAL" "$MERGED" "$REMOTE" --output "$MERGED"
+    # cmd = meld "$LOCAL" "$BASE" "$REMOTE" --output "$MERGED"
     keepBackup = false
     keepTemporaries = false
     trustExitCode = false
