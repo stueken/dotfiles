@@ -29,6 +29,7 @@ Plugin 'mileszs/ack.vim'  " Ack.vim search
 """ Editing
 Plugin 'sheerun/vim-polyglot'     " Collection of language packs 
 Plugin 'Valloric/YoucompleteMe'   " Code completion engine
+" Plugin 'davidhalter/jedi-vim'     " Python autocompletion and 'go to definition'
 Plugin 'Raimondi/delimitMate'     " auto-complete quotes, parens, brackets, etc.
 Plugin 'tpope/vim-surround'       " easily editing brackets, quotes, tags, etc.
 Plugin 'tpope/vim-commentary'     " adds commenting action
