@@ -88,20 +88,12 @@ source $ZSH/oh-my-zsh.sh
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/coding/projects
 export VIRTUALENVWRAPPER_PYTHON='/usr/bin/python3'
-source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
-
-# Ruby
-source ~/.rvm/scripts/rvm  # Initialize RVM (Ruby Version Manager)
-export PATH="$HOME/.rvm/bin:$PATH" # Add RVM (Ruby Version Manager) to PATH for scripting
+# source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
+source $HOME/.local/bin/virtualenvwrapper.sh
 
 # Set environment variables for pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
-
-# Initialize pew
-export PATH="$HOME/.local/bin/:$PATH"  # pipsi
-export WORKON_HOME=$HOME/.virtualenvs
-source $(pew shell_config)
 
 # dircolors path
 # eval `dircolors $HOME/.dir_colors/dircolors`
@@ -123,8 +115,8 @@ export PYTHONDONTWRITEBYTECODE=1
 
 # Initialize pyenv
 eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
 
 # Initialize nvm
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
