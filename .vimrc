@@ -154,6 +154,11 @@ set noshowmode      " Hide the default mode text (e.g. INSERT below statusline)
 let g:airline#extensions#tabline#enabled = 1  " Display buffers when 1 tab open
 let g:tmuxline_powerline_separators = 0  " Set straigt tmux powerline separators 
 
+" disable all airline extensions (-> better Performance)
+let g:airline_extensions = []
+
+" enable cahing of various syntax highlighting groups (-> better Performance)
+let g:airline_highlighting_cache = 1
 
 " ==============================================================================
 " Color Theme base16
