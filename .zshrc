@@ -87,9 +87,9 @@ source $ZSH/oh-my-zsh.sh
 # Load virtualenvwrapper commands
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/coding/projects
-export VIRTUALENVWRAPPER_PYTHON='/usr/bin/python3'
-# source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
-source $HOME/.local/bin/virtualenvwrapper.sh
+export VIRTUALENVWRAPPER_PYTHON='/usr/bin/python'
+source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
+# source $HOME/.local/bin/virtualenvwrapper.sh
 
 # Set environment variables for pyenv
 export PYENV_ROOT="$HOME/.pyenv"
