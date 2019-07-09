@@ -1,4 +1,4 @@
-! Swap caps look and escape
+! Swap caps lock and escape
 clear Lock
 keycode 0x42 = Escape
 ! Uncomment to reverse switch
