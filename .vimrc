@@ -70,7 +70,7 @@ filetype plugin indent on    " Enable language-dependent indenting, required
 " ==============================================================================
 
 """ Display
-syntax on              " Switch syntax highlighting on
+" syntax on              " Switch syntax highlighting on, NVIM DEFAULT
 set cursorline         " Have a line indicate the cursor location
 set colorcolumn=80,90  " Show verticle bar after 80 and 90 chars
 set number             " Show line numbers
@@ -85,10 +85,10 @@ set list
 set list listchars=tab:→·,trail:·,eol:¬,extends:⇉,precedes:⇇
 
 """ Editing
-set backspace=indent,eol,start  " Backspace won't delete over line breaks
+" set backspace=indent,eol,start  " No delete over line breaks, NVIM DEFAULT
 
 """ Commands
-set history=100  " Remember more commands (default=8)
+" set history=100  " Remember more commands (default=8), NVIM DEFAULT = 10000
 
 """ Swap files
 set directory^=$HOME/.vim/tmp//  " Organize swap files
