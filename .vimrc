@@ -16,6 +16,9 @@ Plugin 'itchyny/lightline.vim'            " statusline/tablline
 " Plugin 'godlygeek/tabular'                " required for Vim Markdown
 " Plugin 'plasticboy/vim-markdown'          " Syntax highlighting & matching rules
 Plugin 'Yggdroot/indentLine'              " Display indention w. vertical lines
+Plugin 'ambv/black'                       " use black in vim
+Plugin 'numirias/semshi'                  " semantic highlighting for Python in Neovim
+Plugin 'lilydjwg/colorizer'               " highlight hexadecimal values in color
 
 """ Navigation
 Plugin 'christoomey/vim-tmux-navigator'   " Navigate in tmux panes & vim splits
@@ -96,15 +99,17 @@ set directory^=$HOME/.vim/tmp//  " Organize swap files
 """ Keybindings and Abbreviations - leader key is \ by default
 " Reload vim configuruation file
 map <leader>rrr:source ~/.vimrc<CR>
-" Ctrl-j to move down a split
-nnoremap <C-J> <C-W><C-J>
+" Ctrl-j to move down a splij
+nnoremap <C-J> <C-W><C-Jj
 " Ctrl-k to move up a split
 nnoremap <C-K> <C-W><C-K>
 " Ctrl-l to move right a split
 nnoremap <C-L> <C-W><C-L>
 " Ctrl-h to move left a split
 nnoremap <C-H> <C-W><C-H>
-" Set abbreviation for pdb
+" Run Black on save
+nnoremap <leader>b :Black<CR> <bar> :w<CRr
+" Set abbreviation for rb
 :ab pdb import pdb; pdb.set_trace()
 
 
@@ -116,6 +121,23 @@ nnoremap <C-H> <C-W><C-H>
 cnoreabbrev Ack Ack!
 
 
+" ==============================================================================
+" black
+" ==============================================================================
+"
+let g:black_linelength = 90
+" use ' and "
+let g:black_skip_string_normalization = 1
+let g:black_virtualenv = '~/.pyenv/versions/3.6.3/envs/black'
+" run Black on save
+autocmd BufWritePre *.py execute ':Black'
+"
+" ==============================================================================
+" fzf
+" ==============================================================================
+"
+set rtp+=~/.fzf     " runtime path of fzf
+"
 " ==============================================================================
 " lightline
 " ==============================================================================
