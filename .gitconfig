@@ -4,7 +4,7 @@
 [branch]
     autosetuprebase = always
 [core]
-    editor = vim
+    editor = nvim
 [diff]
     tool = meld
 [difftool]
