@@ -50,6 +50,7 @@ Plugin 'tpope/vim-commentary'     " adds commenting action
 """ Git Integration
 Plugin 'tpope/vim-fugitive'       " git wrapper, e.g. :GBlame
 Plugin 'airblade/vim-gitgutter'   " shows diffs on each line
+Plugin 'rhysd/git-messenger.vim'  " reveals the commit messages under the cursor
  
 """ Outlining
 " Plugin 'vimoutliner/vimoutliner'  " outline processor
