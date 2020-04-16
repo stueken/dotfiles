@@ -15,7 +15,9 @@
     keepTemporaries = false
     trustExitCode = false
 [merge]
-    tool = meld
+    tool = meld  # for GUI
+    ; tool = vimdiff  # for CLI
+    ; conflictstyle = diff3  # for CLI
 [mergetool]
     prompt = false
 [mergetool "meld"]
