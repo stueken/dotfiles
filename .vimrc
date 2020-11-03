@@ -1,70 +1,69 @@
 " ==============================================================================
-" Vundle configuration and installed Plugins
+" vim-plug configuration and installed Plugins
 " ==============================================================================
 
 set nocompatible                    " be iMproved, required for Vundle
 filetype off                        " Disable file type detection, required
-set rtp+=~/.vim/bundle/Vundle.vim   " Set the runtime path to include Vundle
-call vundle#begin()                 " Initialize Vundle
-Plugin 'VundleVim/Vundle.vim'       " Let Vundle manage Vundle, required
+call plug#begin('~/.vim/plugged')
 
 """ Styling
-Plugin 'chriskempson/base16-vim'          " base16 Colorscheme
-Plugin 'itchyny/lightline.vim'            " statusline/tablline
-" Plugin 'vim-airline/vim-airline'          " status/tabline
-" Plugin 'vim-airline/vim-airline-themes'   " themes for airline
-" Plugin 'godlygeek/tabular'                " required for Vim Markdown
-" Plugin 'plasticboy/vim-markdown'          " Syntax highlighting & matching rules
-Plugin 'Yggdroot/indentLine'              " Display indention w. vertical lines
-Plugin 'ambv/black'                       " use black in vim
-Plugin 'numirias/semshi'                  " semantic highlighting for Python in Neovim
-Plugin 'lilydjwg/colorizer'               " highlight hexadecimal values in color
+Plug 'chriskempson/base16-vim'          " base16 Colorscheme
+Plug 'itchyny/lightline.vim'            " statusline/tablline
+" Plug 'vim-airline/vim-airline'          " status/tabline
+" Plug 'vim-airline/vim-airline-themes'   " themes for airline
+" Plug 'godlygeek/tabular'                " required for Vim Markdown
+" Plug 'plasticboy/vim-markdown'          " Syntax highlighting & matching rules
+Plug 'Yggdroot/indentLine'              " Display indention w. vertical lines
+" Plug 'psf/black', {'branch': 'stable'}  " use black in vim
+Plug 'numirias/semshi'                  " semantic highlighting for Python in Neovim
+Plug 'lilydjwg/colorizer'               " highlight hexadecimal values in color
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
 """ Navigation
-Plugin 'christoomey/vim-tmux-navigator'   " Navigate in tmux panes & vim splits
-Plugin 'edkolev/tmuxline.vim'             " tmux statusline generator
-Plugin 'scrooloose/nerdtree'              " NERDTree tree explorer
-Plugin 'Xuyuanp/nerdtree-git-plugin'      " git status flags in NERDTree
+Plug 'christoomey/vim-tmux-navigator'   " Navigate in tmux panes & vim splits
+Plug 'edkolev/tmuxline.vim'             " tmux statusline generator
+Plug 'scrooloose/nerdtree'              " NERDTree tree explorer
+Plug 'Xuyuanp/nerdtree-git-plugin'      " git status flags in NERDTree
 
 """ Search
-" Plugin 'kien/ctrlp.vim'   " CtrlP fuzzy finder NOT USED YET
-Plugin 'mileszs/ack.vim'  " Ack.vim search
+" Plug 'kien/ctrlp.vim'   " CtrlP fuzzy finder NOT USED YET
+Plug 'mileszs/ack.vim'  " Ack.vim search
 
 """ Editing
-Plugin 'sheerun/vim-polyglot'     " Collection of language packs
-" Plugin 'Valloric/YoucompleteMe'   " Code completion engine
-Plugin 'davidhalter/jedi-vim'     " Python autocompletion and 'go to definition'
-" Plugin 'Raimondi/delimitMate'     " auto-complete quotes, parens, brackets, etc.
-" Plugin 'tpope/vim-surround'       " easily editing brackets, quotes, tags, etc.
-Plugin 'tpope/vim-commentary'     " adds commenting action
-" Plugin 'tpope/vim-repeat'         " Repeating supported plugin maps NOT USED YET
-" Plugin 'scrooloose/nerdcommenter' " comment functions
+Plug 'sheerun/vim-polyglot'     " Collection of language packs
+" Plug 'Valloric/YoucompleteMe'   " Code completion engine
+Plug 'davidhalter/jedi-vim'     " Python autocompletion and 'go to definition'
+" Plug 'Raimondi/delimitMate'     " auto-complete quotes, parens, brackets, etc.
+" Plug 'tpope/vim-surround'       " easily editing brackets, quotes, tags, etc.
+Plug 'tpope/vim-commentary'     " adds commenting action
+" Plug 'tpope/vim-repeat'         " Repeating supported plugin maps NOT USED YET
+" Plug 'scrooloose/nerdcommenter' " comment functions
 
 """ Debugging
-" Plugin 'w0rp/ale'           " Asynchronous Lint Engine
-" Plugin 'fisadev/vim-isort'  " Sort python imports using isort
+" Plug 'w0rp/ale'           " Asynchronous Lint Engine
+" Plug 'fisadev/vim-isort'  " Sort python imports using isort
 
 """" Sessions
-" Plugin 'tpope/vim-obsession'  " continuously updated session files
+" Plug 'tpope/vim-obsession'  " continuously updated session files
 
 """ Git Integration
-Plugin 'tpope/vim-fugitive'       " git wrapper, e.g. :GBlame
-Plugin 'airblade/vim-gitgutter'   " shows diffs on each line
-Plugin 'rhysd/git-messenger.vim'  " reveals the commit messages under the cursor
+Plug 'tpope/vim-fugitive'       " git wrapper, e.g. :GBlame
+Plug 'airblade/vim-gitgutter'   " shows diffs on each line
+Plug 'rhysd/git-messenger.vim'  " reveals the commit messages under the cursor
  
 """ Outlining
-" Plugin 'vimoutliner/vimoutliner'  " outline processor
+" Plug 'vimoutliner/vimoutliner'  " outline processor
 
-call vundle#end()            " End of plugins, required for Vundle
-filetype plugin indent on    " Enable language-dependent indenting, required
+call plug#end()
 
 " Brief help
-" :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just
-" :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to
-" auto-approve removal
+" :PlugInstall      - Install plugins
+" :PlugUpdate       - Install or update plugins
+" :PlugClean[!]      - confirms removal of unused plugins; append `!` to
+" :PlugUpgrade      - Upgrade vim-plug itself
+" :PlugStatus       - Check the status of plugins
+" :PlugDiff         - Examine changes from the previous update
+" :PlugSnapshot[!]  - Generate script for restoring the snapshot of plugins
 "
 " see :h vundle for more details or wiki for FAQ
 
@@ -244,7 +243,7 @@ let NERDTreeIgnore = ['\.pyc$', 'htmlcov', '__pycache__', '\.orig$']
 " ==============================================================================
 
 " Config custom symbols
-let g:NERDTreeIndicatorMapCustom = {
+let g:NERDTreeGitStatusIndicatorMapCustom = {
     \ "Modified"  : "✹",
     \ "Staged"    : "✚",
     \ "Untracked" : "✭",
