@@ -7,9 +7,6 @@ source ~/.vimrc
 let g:python_host_prog = '/home/norbert/.pyenv/versions/py2nvim/bin/python'
 let g:python3_host_prog = '/home/norbert/.pyenv/versions/py3nvim/bin/python'
 
-" Configure black (own virtualenv)
-let g:black_virtualenv = '/home/norbert/.pyenv/versions/3.6.3/envs/black'
-
 " Configure NodeJS provider
 let g:node_host_prog = '/usr/local/bin/neovim-node-host'
 
