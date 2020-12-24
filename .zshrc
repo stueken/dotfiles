@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=$HOME/.oh-my-zsh
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -12,7 +12,7 @@ ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
+# a theme from this variable instead of looking in $ZSH/themes/
 # If set to an empty array, this variable will have no effect.
 # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
@@ -33,7 +33,7 @@ ZSH_THEME="robbyrussell"
 # export UPDATE_ZSH_DAYS=13
 
 # Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS=true
+# DISABLE_MAGIC_FUNCTIONS="true"
 
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
@@ -64,8 +64,8 @@ ZSH_THEME="robbyrussell"
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
 # Which plugins would you like to load?
-# Standard plugins can be found in ~/.oh-my-zsh/plugins/*
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git pyenv tmux z)
@@ -86,34 +86,40 @@ source $ZSH/oh-my-zsh.sh
 #   export EDITOR='mvim'
 # fi
 
-# Automatically start a tmux session upon logging in
-ZSH_TMUX_AUTOSTART="true"
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
 
-# config base16 color theme for the shell
+# ----------- start own configuration ---------
+
+# Automatically start a tmux session upon logging in
+# ZSH_TMUX_AUTOSTART="true"
+
+# base16 color theme config for autocompletion
 BASE16_SHELL=$HOME/.config/base16-shell/
 [ -n "$PS1" ] && \
     [ -s $BASE16_SHELL/profile_helper.sh ] && \
         eval "$($BASE16_SHELL/profile_helper.sh)"
 
 # TODO needed for what?
-setxkbmap -option caps:escape  # Replace Esc with CapsLock
+# setxkbmap -option caps:escape  # Replace Esc with CapsLock
 
 # Tell Python not to create byte code (__pycache__ folders and .pyc files)
 export PYTHONDONTWRITEBYTECODE=1
 
 # Load nvm
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# TODO working in zsh as well?
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# TODO needed for what?
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# Load fzf
+ [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Created by `userpath` on 2020-01-10 15:59:46
-# TODO needed for what?
 export PATH=$PATH:$HOME/.local/bin
 
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
+
+# ----------- end own configuration -----------
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -124,5 +130,11 @@ export PATH=$PATH:$HOME/.local/bin
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+# ----------- start own configuration ---------
+
 # set config alias for dotfile repository
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+# use rg for faster file searching
+export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+
+# ----------- end own configuration -----------
