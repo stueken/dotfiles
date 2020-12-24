@@ -64,4 +64,9 @@
 (defun org-current-is-todo ()
   (member (org-get-todo-state) '("TODO" "IN-PROGRESS")))
 
+; Enable languages for evaluation
+(org-babel-do-load-languages
+  'org-babel-load-languages
+  '((shell . t)))
+
 (provide 'init-org)

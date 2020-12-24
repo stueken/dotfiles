@@ -3,9 +3,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files
+ '(package-selected-packages
    (quote
-    ("~/Nextcloud/org/gtd/inbox.org" "~/Nextcloud/org/gtd/gtd.org" "~/Nextcloud/org/gtd/tickler.org"))))
+    (htmlize use-package org-journal markdown-mode helm evil-visual-mark-mode evil-surround evil-leader evil-indent-textobject))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
