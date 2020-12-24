@@ -1,3 +1,6 @@
+;; workaround for bug in 26.1
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
 ;; load built-in package manager 'package.el'
 (require 'package)
 ;; add repositories
