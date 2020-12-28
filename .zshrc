@@ -116,6 +116,7 @@ export NVM_DIR="$HOME/.nvm"
  [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Created by `userpath` on 2020-01-10 15:59:46
+# added by `python -m pipx ensurepath`
 export PATH=$PATH:$HOME/.local/bin
 
 
