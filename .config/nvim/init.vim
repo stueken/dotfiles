@@ -4,9 +4,9 @@
 
 " Install vim-plug if not installed
 if empty(glob('~/.config/nvim/autoload/plug.vim'))
-	silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
-				\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-	autocmd VimEnter * PlugInstall
+    silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
+                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall
 endif
 
 call plug#begin('~/.vim/plugged')
@@ -69,13 +69,19 @@ call plug#end()
 
 """ Providers
 " Configure Python 2 & 3 provider (own virtualenv)
-let g:python_host_prog = '/home/norbert/.pyenv/versions/py2nvim/bin/python'
-let g:python3_host_prog = '/home/norbert/.pyenv/versions/py3nvim/bin/python'
+let g:python_host_prog = '~/.pyenv/versions/py2nvim/bin/python'
+let g:python3_host_prog = '~/.pyenv/versions/py3nvim/bin/python'
 " Configure NodeJS provider
-let g:node_host_prog = '/home/norbert/.nvm/versions/node/v15.4.0/bin/neovim-node-host'
+let g:node_host_prog = '~/.nvm/versions/node/v15.4.0/bin/neovim-node-host'
 
 """ Backup
 " Automatically keep a copy of past versions
+
+" create required directories if necessary
+if !isdirectory($HOME . "/.config/nvim/backup")
+    call mkdir($HOME . "/.config/nvim/backup", "p", 0700)
+endif
+
 set backup                          "Turn on backup option
 set backupdir=~/.config/nvim/backup " Where to store backups
 set writebackup                     "Make backup before overwriting the current buffer
