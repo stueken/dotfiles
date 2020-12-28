@@ -135,6 +135,21 @@ export PATH=$PATH:$HOME/.local/bin
 
 # set config alias for dotfile repository
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+
+# x1 display configuration
+alias three="\
+    xrandr --setprovideroutputsource 3 0 && \
+    xrandr --setprovideroutputsource 4 0 && \
+    xrandr --output LVDS-1 --primary --pos 1100x1200 --rotate normal \
+        --output VGA-1 --off --output HDMI-1 --off --output DP-1 --off \
+        --output DVI-I-2-2 --auto --pos 0x0 --rotate normal \
+        --output DVI-I-1-1 --auto --pos 1920x0 --rotate normal"
+
+alias one="\
+    xrandr --output LVDS-1 --primary --mode 1600x900 --pos 960x1200 --rotate normal \
+        --output VGA-1 --off --output HDMI-1 --off --output DP-1 --off \
+        --output DVI-I-2-2 --off --output DVI-I-1-1 --off"
+
 # use rg for faster file searching
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
 
