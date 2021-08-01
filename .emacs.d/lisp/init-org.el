@@ -36,6 +36,7 @@
     (setq org-agenda-files (list (expand-file-name "gtd/inbox.org" org-directory)
                                  (expand-file-name "gtd/gtd.org" org-directory)
                                  (expand-file-name "gtd/tickler.org" org-directory)
+                                 (expand-file-name "gtd/jowo.org" org-directory)
                                  (expand-file-name "jowo_journal.org" org-directory)))
     (setq org-refile-targets `((,(expand-file-name "gtd/gtd.org" org-directory) :maxlevel . 3)
                                (,(expand-file-name "gtd/someday.org" org-directory) :level . 1)
