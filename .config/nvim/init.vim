@@ -13,7 +13,7 @@ call plug#begin('~/.vim/plugged')
 
 """ Completion
 Plug 'ncm2/ncm2'            " NCM2 (Neovim completion Manager)
-Plug 'roxma/nvim-yarp'      " Plugin Framework for Neovim, required for NCM2
+Plug 'roxma/nvim-yarp'      " Remote plugin framework needed for NCM2
 " NOTE: you need to install completion sources to get completions. Check
 " our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
 Plug 'ncm2/ncm2-bufword'    " Words from current buffer for completion
@@ -29,7 +29,7 @@ Plug 'tpope/vim-surround'   " Insert or delete brackets, parens, quotes in pairs
 """ Formatting and Linting
 Plug 'dense-analysis/ale'                   " ALE (asynchronous lint engine)
 Plug 'fisadev/vim-isort'                    " Sort python imports using isort
-" Plug 'psf/black', {'branch': 'stable'}    " use black in vim
+" TODO Plug 'psf/black', {'branch': 'stable'}    " use black in vim
 Plug 'sbdchd/neoformat'                     " auto-formatting
 
 """ Git Integration
@@ -44,7 +44,8 @@ Plug 'lilydjwg/colorizer'           " highlight hexadecimal values in color
 Plug 'mgee/lightline-bufferline'    " For tabs on top
 " semantic highlighting for Python in Neovim
 Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
-" Plug 'ryanoasis/vim-devicons'       " Adds icons to plugins (install later)
+" TODO Plug 'ryanoasis/vim-devicons'       " Adds icons to plugins (install later)
+Plug 'tpope/vim-obsession'          " store and restore vim sessions
 Plug 'Yggdroot/indentLine'          " Display indention w. vertical lines
 Plug 'Xuyuanp/nerdtree-git-plugin'  " git status flags in NERDTree
 
@@ -58,7 +59,6 @@ Plug 'tmhedberg/SimpylFold'             " Code folding
 """ Search
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'mileszs/ack.vim'  " Ack.vim search
 
 call plug#end()
 
@@ -70,10 +70,12 @@ call plug#end()
 """ Providers
 " Configure Python 2 & 3 provider (own virtualenv)
 let g:python_host_prog = '~/.pyenv/versions/py2nvim/bin/python'
-let g:python3_host_prog = '~/.pyenv/versions/py3nvim/bin/python'
+" let g:python_host_prog = '~/.pyenv/shims/python2'
+" let g:python3_host_prog = '~/.pyenv/versions/py3nvim/bin/python'
+let g:python3_host_prog = '~/.pyenv/shims/python3'
 " Configure NodeJS provider
-let g:node_host_prog = '~/.nvm/versions/node/v15.4.0/bin/neovim-node-host'
-
+let g:node_host_prog = '~/.nvm/versions/node/v15.5.0/bin/neovim-node-host'
+"
 """ Backup
 " Automatically keep a copy of past versions
 
@@ -112,8 +114,8 @@ nnoremap <C-L> <C-W><C-L>
 " jtrl-h to move left a split
 nnoremap <C-H> <C-W><C-H>
 
-" Run Black on save
-nnoremap <leader>b :Black<CR> <bar> :w<CRr
+" TODO Run Black on save
+" nnoremap <leader>b :Black<CR> <bar> :w<CRr
 
 " Set abbreviation for rb
 " :ab pdb import pdb; pdb.set_trace()
@@ -146,15 +148,7 @@ set spelllang=en_us             " set spellcheck
 
 
 " ==============================================================================
-" ack.vim
-" ==============================================================================
-
-" Don't jump to the first result automatically
-cnoreabbrev Ack Ack!
-
-
-" ==============================================================================
-" black
+" TODO black
 " ==============================================================================
 "
 " let g:black_linelength = 90
@@ -177,21 +171,20 @@ endif
 
 
 " ==============================================================================
-" fzf
+" TODO fzf
 " ==============================================================================
 
-nnoremap <C-p> :Files<ENTER>
-if has('nvim')
-  aug fzf_setup
-    au!
-    au TermOpen term://*FZF tnoremap <silent> <buffer><nowait> <esc> <c-c>
-  aug END
-end
+" nnoremap <C-p> :Files<ENTER>
+"
+if has("nvim")
+  au! TermOpen * tnoremap <buffer> <Esc> <c-\><c-n>
+  au! FileType fzf tunmap <buffer> <Esc>
+endif
 
 " ==============================================================================
 " jedi-vim
 " ==============================================================================
-" disable autocompletion, because we use deoplete for completion
+" disable autocompletion, because we use ncm2 for completion
 let g:jedi#completions_enabled = 0
 
 " open the go-to function in split, not another buffer
@@ -206,27 +199,28 @@ let g:jedi#use_splits_not_buffers = "right"
 let g:lightline = {'colorscheme': 'wombat'}
 
 " activate when devicons are working
-" let g:lightline#bufferline#enable_devicons = 1
+let g:lightline#bufferline#enable_devicons = 1
 
 " show abbreviated path of filename
-" let g:lightline = {
-"   \ 'component_function': {
-"     \ 'filename': 'LightlineFilename',
-"   \ },
-" \ }
-" function! LightlineFilename()
-"   return expand('%:t') ==# '' ? '[No Name]' : pathshorten(fnamemodify(expand('%'), ":."))
-" endfunction
+let g:lightline = {
+  \ 'component_function': {
+    \ 'filename': 'LightlineFilename',
+  \ },
+\ }
+function! LightlineFilename()
+  return expand('%:t') ==# '' ? '[No Name]' : pathshorten(fnamemodify(expand('%'), ":."))
+endfunction
 
 
 " ==============================================================================
 " NCM2
 " ==============================================================================
 
-" enable ncm2 for all buffers
+" TODO getting error message when starting python file
+" " enable ncm2 for all buffers
 autocmd BufEnter * call ncm2#enable_for_buffer()
 
-" IMPORTANT: :help Ncm2PopupOpen for more information
+" " IMPORTANT: :help Ncm2PopupOpen for more information
 set completeopt=noinsert,menuone,noselect
 
 " suppress the annoying 'match x of y', 'The only match' and 'Pattern not
@@ -249,8 +243,8 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 " Note that omnifunc does not run in background and may probably block the
 " editor. If you don't want to be blocked by omnifunc too often, you could
 " add 180ms delay before the omni wrapper:
-"  'on_complete': ['ncm2#on_complete#delay', 180,
-"               \ 'ncm2#on_complete#omni', 'csscomplete#CompleteCSS'],
+" 'on_complete': ['ncm2#on_complete#delay', 180,
+"              \ 'ncm2#on_complete#omni', 'csscomplete#CompleteCSS'],
 au User Ncm2Plugin call ncm2#register_source({
 \ 'name' : 'css',
 \ 'priority': 9,
@@ -303,5 +297,3 @@ let g:NERDTreeGitStatusIndicatorMapCustom = {
     \ "Clean"     : "✔︎",
     \ "Unknown"   : "?"
     \ }
-
-
