@@ -153,4 +153,11 @@ alias one="\
 # use rg for faster file searching
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
 
+# Enable pyenv shims and autocompletion
+# NOTE: Must be placed toward the end since it manipulates PATH during init
+eval "$(pyenv init --path)"
+
+# Enable auto-activation of virtualenvs
+eval "$(pyenv virtualenv-init -)"
+
 # ----------- end own configuration -----------
