@@ -71,10 +71,14 @@ call plug#end()
 " Configure Python 2 & 3 provider (own virtualenv)
 let g:python_host_prog = '~/.pyenv/versions/py2nvim/bin/python'
 " let g:python_host_prog = '~/.pyenv/shims/python2'
-" let g:python3_host_prog = '~/.pyenv/versions/py3nvim/bin/python'
-let g:python3_host_prog = '~/.pyenv/shims/python3'
+let g:python3_host_prog = '~/.pyenv/versions/py3nvim/bin/python'
+" let g:python3_host_prog = '~/.pyenv/shims/python3'
 " Configure NodeJS provider
-let g:node_host_prog = '~/.nvm/versions/node/v15.5.0/bin/neovim-node-host'
+let g:node_host_prog = '~/.nvm/versions/node/v17.1.0/bin/neovim-node-host'
+" Disable Ruby support
+let g:loaded_ruby_provider = 0
+" Disable Perl support
+let g:loaded_perl_provider = 0
 "
 """ Backup
 " Automatically keep a copy of past versions
