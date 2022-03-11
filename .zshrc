@@ -136,6 +136,9 @@ export PATH=$PATH:$HOME/.local/bin
 # set config alias for dotfile repository
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
+# set alias for Neovim appimage
+alias nvim="~/.local/bin/nvim.appimage"
+
 # x1 display configuration
 alias three="\
     xrandr --setprovideroutputsource 3 0 && \
@@ -152,6 +155,9 @@ alias one="\
 
 # use rg for faster file searching
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+
+# from mapool dev setup, check the reason behind that
+alias pip='noglob pip'
 
 # Enable pyenv shims and autocompletion
 # NOTE: Must be placed toward the end since it manipulates PATH during init
