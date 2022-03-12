@@ -16,7 +16,7 @@
  
 ;; Install use-package if not installed
 (unless (package-installed-p 'use-package)
-  (package-refresh-contentes)
+  (package-refresh-contents)
   (package-install 'use-package))
 ;; initialize use-package
 (require 'use-package)
@@ -106,10 +106,10 @@
 ;; Collection of Ivy-enhanced versions of common Emacs commands
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
-	 ("C-x b" . counsel-ibuffer)
-	 ("C-x C-f" . counsel-find-file)
-	 :map minibuffer-local-map
-	 ("C-r" . 'counsel-minibuffer-history)))
+         ("C-x b" . counsel-ibuffer)
+         ("C-x C-f" . counsel-find-file)
+         :map minibuffer-local-map
+         ("C-r" . 'counsel-minibuffer-history)))
 
 ;; Enhances ivy and counsel with additional information.
 (use-package ivy-rich
@@ -146,8 +146,8 @@
   :hook
   (text-mode . mixed-pitch-mode)
   :config
-  (set-face-attribute 'default nil :font "Fira Code" :height 130)
-  (set-face-attribute 'fixed-pitch nil :font "Fira Code")  ; or DejaVu Sans Mono
+  (set-face-attribute 'default nil :font "Fira Code Nerd Font" :height 130)
+  (set-face-attribute 'fixed-pitch nil :font "Fira Code Nerd Font")  ; or DejaVu Sans Mono
   (set-face-attribute 'variable-pitch nil :font "Cantarell"))  ; DejaVu Sans
 
 ;; *************************
