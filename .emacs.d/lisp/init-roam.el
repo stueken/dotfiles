@@ -3,7 +3,8 @@
 ;; ---------------
 
 ;; Keep Org-roam notes separate to GTD directory
-(setq org-roam-directory (concat (getenv "HOME") "/nextcloud/org/notes/"))
+;; (setq org-roam-directory (concat (getenv "HOME") "/nextcloud/org/notes/"))
+(setq org-roam-directory (concat org-directory "notes/"))
 
 (use-package org-roam
   :after org
@@ -12,6 +13,17 @@
   (org-roam-directory (file-truename org-roam-directory))
   :config
   (org-roam-setup)  ; initiate the database
+
+  ;; Creating the property "type" on my nodes (must be after org-roam-setup)
+  (cl-defmethod org-roam-node-type ((node org-roam-node))
+    "Return the TYPE of NODE."
+    (condition-case nil
+      (file-name-nondirectory
+       (directory-file-name
+        (file-name-directory
+	 (file-relative-name (org-roam-node-file node) org-roam-directory))))
+      (error "")))
+
   :bind (("C-c n f" . org-roam-node-find)    ; Open a new or existing note
          ("C-c n r" . org-roam-node-random)  ; Open a random note		    
          (:map org-mode-map
@@ -21,12 +33,30 @@
                 ("C-c n a" . org-roam-alias-add)          ; Add alias
                 ("C-c n l" . org-roam-buffer-toggle)))))  ; Toggle show of backlinks
 
-(setq org-roam-capture-templates '(("d" "default" plain "%?"
-                                    :if-new
-                                    (file+head "${slug}.org"
-                                               "#+title: ${title}\n#+date: %u\n#+lastmod: \n\n")
-                                    :immediate-finish t))  ; bypass capture system
-      time-stamp-start "#\\+lastmod: [\t]*")  ; set variable to store last modified
+(setq org-roam-capture-templates
+      '(("m" "main" plain "%?"
+         :if-new (file+head "main/${slug}.org"
+			    "#+title: ${title}\n")
+         :immediate-finish t  ; bypass capture system
+	 :unnarrowed t)
+	("r" "reference" plain "%?"
+	 :if-new (file+head "reference/${title}.org"
+			    "#+title: ${title}\n")
+	 :immediate-finish t
+	 :unnarrowed t)
+	("a" "article" plain "%?"
+	 :if-new (file+head "articles/${title}.org"
+		  "#+title: ${title}\n#filetags: :article:\n")
+	 :immediate-finish t
+	 :unnarrowed t)))
+
+;; Modifying the display template to show the node "type"
+(setq org-roam-node-display-template
+      (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+
+;; --------
+;; Packages --------------------------------------------------------------------
+;; --------
 
 ;; Search inside written notes
 (use-package deft

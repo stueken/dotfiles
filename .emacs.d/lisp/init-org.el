@@ -34,7 +34,7 @@
   (setq org-agenda-files '("inbox.org" "agenda.org"))
 
   (setq org-capture-templates
-	;; Append to inbox file with inactive timestamp that does not cause an agenda entr
+	;; Append to inbox file with inactive timestamp that does not cause an agenda entry
         `(("i" "Inbox" entry  (file "inbox.org")
           ,(concat "* TODO  %?\n"
                    "/Entered on/ %U"))))

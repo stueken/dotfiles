@@ -1,8 +1,3 @@
-;; Load custom variables and faces
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(when (file-exists-p custom-file)
-  (load custom-file))
-
 ;; *****************************
 ;; Package Manager Configuration -----------------------------------------------
 ;; *****************************
@@ -40,6 +35,7 @@
 (blink-cursor-mode 1)                ; cursor blinking toggle
 (column-number-mode)                 ; Display column numbers
 (global-display-line-numbers-mode 1) ; Display line numbers in every buffer
+(setq use-dialog-box nil)            ; Don't pop up UI dialogs when prompting
 
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
@@ -50,6 +46,13 @@
 
 ;; Set all yes / no confirmations to a one-letter abbreviation
 (defalias 'yes-or-no-p 'y-or-n-p)
+
+(global-auto-revert-mode 1)  ; Revert buffers when the file has changed
+(recentf-mode 1)             ; Remember recently edited files
+(setq history-length 25)     ; Set minibuffer history size
+(savehist-mode 1)            ; Save entered history with history-length
+(save-place-mode 1)          ; Remember the last place you visited in a file
+
 
 ;; Theme megapack
 ;; find more at https://github.com/doomemacs/themes or https://emacsthemes.com/
@@ -203,6 +206,17 @@
 ;;   (org-indent-mode)
 ;;   (variable-pitch-mode 1)
 ;;   (visual-line-mode 1))
+
+;; Move customization variables to a separate file and load it
+(setq custom-file (locate-user-emacs-file "custom-vars.el"))
+(load custom-file 'noerror 'nomessage)
+
+;; TODO REMOVE if above works
+;; Load custom variables and faces
+;; (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+;; (when (file-exists-p custom-file)
+;;   (load custom-file))
+
 
 ;; ***********************************
 ;; Load additional configuration files -----------------------------------------
