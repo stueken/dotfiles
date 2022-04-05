@@ -1,3 +1,7 @@
+;; Don't warn about anything but errors or emergencies at startup
+(setq warning-minimum-level :error)
+
+
 ;; *****************************
 ;; Package Manager Configuration -----------------------------------------------
 ;; *****************************
