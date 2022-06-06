@@ -211,6 +211,13 @@
 ;;   (variable-pitch-mode 1)
 ;;   (visual-line-mode 1))
 
+;; ox-hugo Configuration ---------------------------------------------------------
+
+(use-package ox-hugo
+  :ensure t   ; Auto-install the package from Melpa
+  :pin melpa
+  :after ox)
+
 ;; Move customization variables to a separate file and load it
 (setq custom-file (locate-user-emacs-file "custom-vars.el"))
 (load custom-file 'noerror 'nomessage)
@@ -220,7 +227,6 @@
 ;; (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 ;; (when (file-exists-p custom-file)
 ;;   (load custom-file))
-
 
 ;; ***********************************
 ;; Load additional configuration files -----------------------------------------
