@@ -33,6 +33,7 @@
 (menu-bar-mode -1)   ; Disable the menu bar, but reachable with F10
 (scroll-bar-mode -1) ; Disable visible scrollbar
 (tool-bar-mode -1)   ; Disable the toolbar
+
 (tooltip-mode -1)    ; Disable tooltips
 
 (global-hl-line-mode -1)             ; Highlight current line toggle
@@ -142,6 +143,9 @@
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
 
+;; expands snippets to structures, e.g. ~< s TAB~ for code block
+(require 'org-tempo)
+
 
 ;; ******************
 ;; Font Configuration -----------------------------------------------------------
@@ -226,7 +230,7 @@
 ;; Load custom variables and faces
 ;; (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 ;; (when (file-exists-p custom-file)
-;;   (load custom-file))
+;;    (load custom-file))
 
 ;; ***********************************
 ;; Load additional configuration files -----------------------------------------
