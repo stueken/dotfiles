@@ -161,6 +161,12 @@ alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 # set alias for Neovim appimage
 alias nvim="~/.local/bin/nvim.appimage"
 
+# # x1g7 Ubuntu Audio device configuration
+# # Input
+# pactl set-default-source alsa_input.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__hw_sofhdadsp__source
+# # Output
+# pactl set-default-sink alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__hw_sofhdadsp__sink
+
 # x1 display configuration
 alias three="\
     xrandr --setprovideroutputsource 3 0 && \
