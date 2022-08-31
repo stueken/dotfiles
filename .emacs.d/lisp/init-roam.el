@@ -39,6 +39,11 @@
 			    "#+title: ${title}\n")
          :immediate-finish t  ; bypass capture system
 	 :unnarrowed t)
+        ("j" "jowo" plain "%?"
+         :if-new (file+head "jowo/${slug}.org"
+			    "#+title: ${title}\n")
+         :immediate-finish t
+	 :unnarrowed t)
 	("r" "reference" plain "%?"
 	 :if-new (file+head "reference/${title}.org"
 			    "#+title: ${title}\n")
