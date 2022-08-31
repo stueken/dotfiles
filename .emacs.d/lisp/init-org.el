@@ -25,6 +25,7 @@
    ("C-c i" . 'org-capture-inbox))  ; capture to inbox
   :config
   (setq org-directory "~/Documents/org/")
+
   (setq org-hide-emphasis-markers t         ; hide rich text/emphasis markers
 	org-image-actual-width '(300)       ; restrict width of preview images
 	org-pretty-entities t               ; display special characters like x² and x_1
@@ -77,5 +78,27 @@
          (text-scale-decrease 2))))  ; decrease text size
    :bind
    (("<f9>" . distraction-free)))  ; activate with F9
+
+
+;; TODO
+;; **********
+;; Babel  -------------------------------------------------------------------
+;; **********
+
+;; Mermaid.js Org mode integration
+(use-package ob-mermaid)  ; https://github.com/arnm/ob-mermaid
+(setq ob-mermaid-cli-path "~/node_modules/.bin/mmdc")
+
+;; PlantUML Org mode integration
+(use-package plantuml-mode)
+(setq org-plantuml-jar-path
+      (expand-file-name "/opt/plantuml/plantuml.jar"))
+(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+
+(org-babel-do-load-languages
+    'org-babel-load-languages
+    '((mermaid . t)
+      (plantuml . t)
+      (scheme . t)))
 
 (provide 'init-org)
