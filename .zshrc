@@ -191,7 +191,12 @@ alias pip='noglob pip'
 
 # Enable pyenv shims and autocompletion
 # NOTE: Must be placed toward the end since it manipulates PATH during init
-eval "$(pyenv init --path)"
+# old
+# eval "$(pyenv init --path)"
+# new https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
 
 # Enable auto-activation of virtualenvs
 eval "$(pyenv virtualenv-init -)"
