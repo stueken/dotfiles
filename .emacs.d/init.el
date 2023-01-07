@@ -57,7 +57,7 @@
 (setq history-length 25)     ; Set minibuffer history size
 (savehist-mode 1)            ; Save entered history with history-length
 (save-place-mode 1)          ; Remember the last place you visited in a file
-
+(desktop-save-mode 1)        ; Restore last desktop session on startup
 
 ;; Theme megapack
 ;; find more at https://github.com/doomemacs/themes or https://emacsthemes.com/
