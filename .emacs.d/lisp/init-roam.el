@@ -13,6 +13,7 @@
   (org-roam-directory (file-truename org-roam-directory))
   :config
   (org-roam-setup)  ; initiate the database
+  (org-roam-db-autosync-mode)  ; ensure Org-roam is available on startup
 
   ;; Creating the property "type" on my nodes (must be after org-roam-setup)
   (cl-defmethod org-roam-node-type ((node org-roam-node))
