@@ -212,18 +212,18 @@ time([[Defining packer_plugins]], false)
 time([[Config for nvim-tree.lua]], true)
 require("setup/nvim-tree")
 time([[Config for nvim-tree.lua]], false)
--- Config for: nvim-treesitter
-time([[Config for nvim-treesitter]], true)
-require("setup/treesitter")
-time([[Config for nvim-treesitter]], false)
--- Config for: trouble.nvim
-time([[Config for trouble.nvim]], true)
-require("setup/trouble")
-time([[Config for trouble.nvim]], false)
 -- Config for: gitsigns.nvim
 time([[Config for gitsigns.nvim]], true)
 require("setup/gitsigns")
 time([[Config for gitsigns.nvim]], false)
+-- Config for: trouble.nvim
+time([[Config for trouble.nvim]], true)
+require("setup/trouble")
+time([[Config for trouble.nvim]], false)
+-- Config for: nvim-treesitter
+time([[Config for nvim-treesitter]], true)
+require("setup/treesitter")
+time([[Config for nvim-treesitter]], false)
 -- Config for: null-ls.nvim
 time([[Config for null-ls.nvim]], true)
 require("setup/null-ls")
