@@ -73,11 +73,12 @@
 ;; Library for inserting developer icons
 (use-package all-the-icons)
 
+;; TODO Deactivated on 230315 as export C-c C-e-is broken when using it
 ;; Fancy, fast and minimalistic mode-line
-(use-package doom-modeline
-  :ensure t
-  :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 15)))
+; (use-package doom-modeline
+;   :ensure t
+;   :init (doom-modeline-mode 1)
+;   :custom ((doom-modeline-height 15)))
 
 ;; Highlights delimters according to their depth
 (use-package rainbow-delimiters
