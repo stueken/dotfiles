@@ -39,9 +39,10 @@ return require('packer').startup({
 
   -- Color scheme
   -- base16 colorscheme
-  use { 'chriskempson/base16-vim' }
+  -- use { 'chriskempson/base16-vim' }
   -- TODO checkout this theme
   -- use 'joshdick/onedark.vim'
+  use { 'RRethy/nvim-base16' }
 
   -- TODO read through readme and check commands/configurations
   -- Fuzzy finder
