@@ -102,7 +102,8 @@ BASE16_SHELL="$HOME/.config/base16-shell/"
     [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
         source "$BASE16_SHELL/profile_helper.sh"
 
-base16_brewer
+# TODO not needed anymore?
+# base16_brewer
 
 # TODO needed for what?
 # setxkbmap -option caps:escape  # Replace Esc with CapsLock
