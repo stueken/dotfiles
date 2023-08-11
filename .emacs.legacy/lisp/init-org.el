@@ -24,7 +24,7 @@
    ("C-c l" . org-store-link)       ; create link
    ("C-c i" . 'org-capture-inbox))  ; capture to inbox
   :config
-  (setq org-directory "~/Documents/Org/")
+  (setq org-directory "~/Documents/org/")
 
   (setq org-hide-emphasis-markers t         ; hide rich text/emphasis markers
 	org-image-actual-width '(300)       ; restrict width of preview images
