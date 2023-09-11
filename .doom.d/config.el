@@ -22,6 +22,71 @@
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/Documents/org/")
 
+(after! org (setq org-insert-heading-respect-content nil))
+
+(add-hook! org-mode :append
+           #'visual-line-mode)
+           ;; #'variable-pitch-mode)
+
+(after! org (setq org-hide-emphasis-markers t))
+
+(after! org
+  (use-package! org-appear
+    :hook (org-mode . org-appear-mode)))
+
+(setq org-roam-directory (concat org-directory "notes/"))
+
+(org-roam-db-autosync-mode)
+
+(setq org-roam-capture-templates
+      '(("m" "main" plain "%?"
+         :if-new (file+head "main/${slug}.org"
+			    "#+title: ${title}\n")
+         :immediate-finish t  ; bypass capture system
+	 :unnarrowed t)
+        ("j" "jowo" plain "%?"
+         :if-new (file+head "jowo/${slug}.org"
+			    "#+title: ${title}\n")
+         :immediate-finish t
+	 :unnarrowed t)
+	("r" "reference" plain "%?"
+	 :if-new (file+head "reference/${title}.org"
+			    "#+title: ${title}\n")
+	 :immediate-finish t
+	 :unnarrowed t)
+	("a" "article" plain "%?"
+	 :if-new (file+head "articles/${title}.org"
+		  "#+title: ${title}\n#filetags: :article:\n")
+	 :immediate-finish t
+	 :unnarrowed t)))
+
+(cl-defmethod org-roam-node-type ((node org-roam-node))
+  "Return the TYPE of NODE."
+  (condition-case nil
+    (file-name-nondirectory
+     (directory-file-name
+      (file-name-directory
+       (file-relative-name (org-roam-node-file node) org-roam-directory))))
+    (error "")))
+
+(setq org-roam-node-display-template
+      (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+
+(use-package! websocket
+    :after org-roam)
+
+(use-package! org-roam-ui
+    :after org-roam ;; or :after org
+;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+;;         a hookable mode anymore, you're advised to pick something yourself
+;;         if you don't care about startup time, use
+;;  :hook (after-init . org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
+
 (use-package! org-super-agenda
   ;should load after org-agenda
   :after org-agenda
@@ -42,25 +107,10 @@
   :config
   (org-super-agenda-mode))
 
-(setq org-roam-directory (concat org-directory "notes/"))
-
-(use-package! websocket
-    :after org-roam)
-
-(use-package! org-roam-ui
-    :after org-roam ;; or :after org
-;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-;;         a hookable mode anymore, you're advised to pick something yourself
-;;         if you don't care about startup time, use
-;;  :hook (after-init . org-roam-ui-mode)
-    :config
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow t
-          org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
+(after! org-clock
+  (setq org-clock-persist t)
+  (org-clock-persistence-insinuate))
 
 (setq org-journal-date-prefix "#+TITLE: "
       org-journal-time-prefix "* "
       org-journal-file-format "%Y-%m-%d.org")
-
-;; (setq org-roam-directory "~/Documents/Org/notes/main")
