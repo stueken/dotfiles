@@ -39,15 +39,20 @@
 (org-roam-db-autosync-mode)
 
 (setq org-roam-capture-templates
-      '(("m" "main" plain "%?"
-         :if-new (file+head "main/${slug}.org"
+  '(("m" "main" plain "%?"
+   :if-new (file+head "main/${slug}.org"
 			    "#+title: ${title}\n")
-         :immediate-finish t  ; bypass capture system
+   :immediate-finish t  ; bypass capture system
 	 :unnarrowed t)
-        ("j" "jowo" plain "%?"
-         :if-new (file+head "jowo/${slug}.org"
+  ("j" "jowo" plain "%?"
+   :if-new (file+head "jowo/${slug}.org"
 			    "#+title: ${title}\n")
-         :immediate-finish t
+   :immediate-finish t
+	 :unnarrowed t)
+  ("p" "personal" plain "%?"
+   :if-new (file+head "personal/${slug}.org"
+			    "#+title: ${title}\n")
+   :immediate-finish t
 	 :unnarrowed t)
 	("r" "reference" plain "%?"
 	 :if-new (file+head "reference/${title}.org"
@@ -71,6 +76,18 @@
 
 (setq org-roam-node-display-template
       (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+
+(defun nrbrt/org-roam-toggle-personal-subdirectory ()
+  (interactive)
+  (if (listp org-roam-file-exclude-regexp)
+      (if (member "personal" org-roam-file-exclude-regexp)
+          (setq org-roam-file-exclude-regexp (delete "personal" org-roam-file-exclude-regexp))
+        (add-to-list 'org-roam-file-exclude-regexp "personal"))
+    (setq org-roam-file-exclude-regexp
+          (if (string-match-p "personal" org-roam-file-exclude-regexp)
+              (replace-regexp-in-string "\\|personal" "" org-roam-file-exclude-regexp)
+            (concat org-roam-file-exclude-regexp "\\|personal"))))
+  (org-roam-db-sync))
 
 (use-package! websocket
     :after org-roam)

@@ -176,7 +176,7 @@ Use [[https://github.com/awth13/org-appear][org-appear]] to show hidden emphasis
 ** Capturing and note taking
 *** TODO Org-Roam
 
-Keep Org-roam notes separate to GTD directory:
+Keep Org-roam notes separate to other directories:
 #+begin_src emacs-lisp
 (setq org-roam-directory (concat org-directory "notes/"))
 #+end_src
@@ -189,15 +189,20 @@ Ensure Org-roam is available on start
 Change the file name format by modifying the ~org-roam-capture-templates~ variable.
 #+begin_src emacs-lisp
 (setq org-roam-capture-templates
-      '(("m" "main" plain "%?"
-         :if-new (file+head "main/${slug}.org"
+  '(("m" "main" plain "%?"
+   :if-new (file+head "main/${slug}.org"
 			    "#+title: ${title}\n")
-         :immediate-finish t  ; bypass capture system
+   :immediate-finish t  ; bypass capture system
 	 :unnarrowed t)
-        ("j" "jowo" plain "%?"
-         :if-new (file+head "jowo/${slug}.org"
+  ("j" "jowo" plain "%?"
+   :if-new (file+head "jowo/${slug}.org"
 			    "#+title: ${title}\n")
-         :immediate-finish t
+   :immediate-finish t
+	 :unnarrowed t)
+  ("p" "personal" plain "%?"
+   :if-new (file+head "personal/${slug}.org"
+			    "#+title: ${title}\n")
+   :immediate-finish t
 	 :unnarrowed t)
 	("r" "reference" plain "%?"
 	 :if-new (file+head "reference/${title}.org"
@@ -237,6 +242,24 @@ Modify the display template to show the node "type".
 (setq org-roam-node-display-template
       (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
 #+end_src
+**** Custom subdirectory toggle
+
+Define functions to toggle the inclusion/exclusion of certain subdirectories when indexing and searching the knowledge base.
+*Note:* This version of the function handles both cases: when ~org-roam-file-exclude-regexp~ is a string and when it's a list of strings. It toggles the inclusion/exclusion of the subdirectory accordingly.
+#+begin_src emacs-lisp
+(defun nrbrt/org-roam-toggle-personal-subdirectory ()
+  (interactive)
+  (if (listp org-roam-file-exclude-regexp)
+      (if (member "personal" org-roam-file-exclude-regexp)
+          (setq org-roam-file-exclude-regexp (delete "personal" org-roam-file-exclude-regexp))
+        (add-to-list 'org-roam-file-exclude-regexp "personal"))
+    (setq org-roam-file-exclude-regexp
+          (if (string-match-p "personal" org-roam-file-exclude-regexp)
+              (replace-regexp-in-string "\\|personal" "" org-roam-file-exclude-regexp)
+            (concat org-roam-file-exclude-regexp "\\|personal"))))
+  (org-roam-db-sync))
+#+end_src
+
 **** org-roam-ui
 #+begin_src emacs-lisp
 (use-package! websocket
