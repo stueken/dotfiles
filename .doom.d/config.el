@@ -167,6 +167,9 @@
   (setq org-clock-persist t)
   (org-clock-persistence-insinuate))
 
+(use-package! ox-jira
+  :after org)
+
 (setq org-journal-date-prefix "#+TITLE: "
       org-journal-time-prefix "* "
       org-journal-file-format "%Y-%m-%d.org")

@@ -49,13 +49,20 @@
 ;(unpin! t)
 
 (package! org-super-agenda)
+(package! ox-jira)
 
 ;; TODO Remove if fixed
 ;; Temporary fix as files with links are not scanned by org-roam-db-sync
 ;; https://github.com/org-roam/org-roam/issues/2361#issuecomment-1650957932
 (package! org :pin "ca873f7")
 
+(package! org-appear
+  :recipe (:host github
+           :repo "awth13/org-appear"))
+;;
 ;; HACK Use latest version of org-roam used by org-roam-ui
 ;; see https://github.com/org-roam/org-roam-ui#doom
 (unpin! org-roam)
 (package! org-roam-ui)
+
+

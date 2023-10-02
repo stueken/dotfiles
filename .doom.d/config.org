@@ -364,6 +364,18 @@ For an example config, check here: https://zzamboni.org/post/my-doom-emacs-confi
 *** TODO Exporting a Curriculum Vitae
 see https://zzamboni.org/post/my-doom-emacs-configuration-with-commentary/#exporting-a-curriculum-vitae
 *** TODO Blogging with Hugo
+*** TODO Reveal.js presentations
+*** TODO Other exporters
+**** ox-jira
+Export in Jira / Confluence markup format
+
+#+begin_src emacs-lisp
+(use-package! ox-jira
+  :after org)
+#+end_src
+**** TODO org-jira
+https://github.com/ahungry/org-jira
+
 
 *** Org-journal
 
