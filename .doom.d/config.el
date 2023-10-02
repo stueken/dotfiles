@@ -89,6 +89,45 @@
             (concat org-roam-file-exclude-regexp "\\|personal"))))
   (org-roam-db-sync))
 
+(defun rename-org-files ()
+  "Rename .org files in `org-roam-directory` according to the '${slug}.org' template."
+  (interactive)
+  (let ((dir org-roam-directory))
+    (dolist (file (directory-files-recursively dir "\\.org$"))
+      (let* ((old-file (file-truename file))
+             (slug (generate-slug-from-file-title file))
+             (new-file (expand-file-name (format "%s.org" slug) (file-name-directory old-file))))
+        (unless (string= old-file new-file)
+          (rename-file old-file new-file t)
+          (update-links-in-file new-file slug))))))
+
+(defun generate-slug-from-file-title (file)
+  "Generate a slug from the 'title' property in the FILE."
+  (with-temp-buffer
+    (insert-file-contents file)
+    (let ((case-fold-search t))
+      (if (re-search-forward "^#\\+title: \\(.+\\)$" nil t)
+          (let ((title (match-string 1)))
+            (replace-regexp-in-string "[^[:alnum:]]+" "-" (downcase title)))
+        "untitled"))))
+
+(defun update-links ()
+  "Update links in all .org files in `org-roam-directory`."
+  (interactive)
+  (let ((dir org-roam-directory))
+    (dolist (file (directory-files-recursively dir "\\.org$"))
+      (let* ((slug (generate-slug-from-file-title file)))
+        (update-links-in-file file slug)))))
+
+(defun update-links-in-file (file slug)
+  "Update links in FILE to the new SLUG."
+  (find-file file)
+  (goto-char (point-min))
+  (while (re-search-forward (format "\\[\\[.*?%s\\]\\[.*?\\]\\]" slug) nil t)
+    (replace-match (format "[[%s][%s]]" slug (match-string 0))))
+  (save-buffer)
+  (kill-buffer))
+
 (use-package! websocket
     :after org-roam)
 
