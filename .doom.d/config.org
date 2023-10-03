@@ -143,6 +143,31 @@ Insert Org headings at point, not after the current subtree (this is enabled by 
 #+begin_src emacs-lisp
 (after! org (setq org-insert-heading-respect-content nil))
 #+end_src
+*** Custom Output directory for exports
+
+Modify the output directory for exported Org files.
+
+This function is an advice around ~org-export-output-file-name~
+that modifies the output directory for exported Org files. If
+~pub-dir~ is not specified, it sets it to a subdirectory named
+"export" within the ~org-directory~.
+
+Parameters:
+- ORIG-FUN: The original function being advised.
+- EXTENSION: The file extension for the exported file.
+- SUBTREEP: Whether to export only the current subtree.
+- PUB-DIR: The output directory for the exported file.
+
+Returns: The modified output file name.
+#+begin_src emacs-lisp
+(defun org-export-output-file-name-modified (orig-fun extension &optional subtreep pub-dir)
+  (unless pub-dir
+    (setq pub-dir (concat (file-name-as-directory org-directory) "export"))
+    (unless (file-directory-p pub-dir)
+      (make-directory pub-dir)))
+  (apply orig-fun extension subtreep pub-dir nil))
+(advice-add 'org-export-output-file-name :around #'org-export-output-file-name-modified)
+#+end_src
 
 ** TODO Org visual settings
 

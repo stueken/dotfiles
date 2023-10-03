@@ -24,6 +24,14 @@
 
 (after! org (setq org-insert-heading-respect-content nil))
 
+(defun org-export-output-file-name-modified (orig-fun extension &optional subtreep pub-dir)
+  (unless pub-dir
+    (setq pub-dir (concat (file-name-as-directory org-directory) "export"))
+    (unless (file-directory-p pub-dir)
+      (make-directory pub-dir)))
+  (apply orig-fun extension subtreep pub-dir nil))
+(advice-add 'org-export-output-file-name :around #'org-export-output-file-name-modified)
+
 (add-hook! org-mode :append
            #'visual-line-mode)
            ;; #'variable-pitch-mode)
