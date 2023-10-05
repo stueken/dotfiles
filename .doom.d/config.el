@@ -54,7 +54,7 @@
 	 :unnarrowed t)
   ("j" "jowo" plain "%?"
    :if-new (file+head "jowo/${slug}.org"
-			    "#+title: ${title}\n")
+			    "#+title: ${title}\n#+TODO: TODO NEXT IN-PROGRESS ON-HOLD | DONE CANCEL\n")
    :immediate-finish t
 	 :unnarrowed t)
   ("p" "personal" plain "%?"
