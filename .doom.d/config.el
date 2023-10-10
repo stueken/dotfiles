@@ -42,6 +42,8 @@
   (use-package! org-appear
     :hook (org-mode . org-appear-mode)))
 
+(setq ob-mermaid-cli-path "/usr/local/bin/mmdc")
+
 (setq org-roam-directory (concat org-directory "notes/"))
 
 (org-roam-db-autosync-mode)

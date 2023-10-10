@@ -48,6 +48,7 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
+(package! ob-mermaid)
 (package! org-super-agenda)
 (package! ox-jira)
 

@@ -197,6 +197,20 @@ Use [[https://github.com/awth13/org-appear][org-appear]] to show hidden emphasis
   (use-package! org-appear
     :hook (org-mode . org-appear-mode)))
 #+end_src
+** Babel
+Add Mermaid.js Org mode integration: [[https://github.com/arnm/ob-mermaid][ob-mermaid]]
+
+#+begin_src emacs-lisp
+(setq ob-mermaid-cli-path "/usr/local/bin/mmdc")
+#+end_src
+
+#+begin_src
+(org-babel-do-load-languages
+    'org-babel-load-languages
+    '((mermaid . t)
+      (plantuml . t)
+      (scheme . t)))
+#+end_src
 
 ** Capturing and note taking
 *** TODO Org-Roam
