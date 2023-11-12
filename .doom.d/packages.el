@@ -57,6 +57,8 @@
 ;; https://github.com/org-roam/org-roam/issues/2361#issuecomment-1650957932
 (package! org :pin "ca873f7")
 
+;; Make invisible parts of Org elements appear visible
+;; https://github.com/awth13/org-appear
 (package! org-appear
   :recipe (:host github
            :repo "awth13/org-appear"))

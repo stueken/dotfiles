@@ -103,15 +103,24 @@ Just info about how to configure fonts, not written to the config.
 #+end_src
 
 *** Theme
+- https://github.com/doomemacs/themes
+- Defaults are shown [[https://github.com/doomemacs/themes#manually--use-package][here]]
+- [[https://github.com/doomemacs/themes][Screenshots of all themes]] or temporarily load a theme with ~SPC h t~.
 
-Choosing the standard theme now: doom-one.
+Choosing the standard theme now: wombat.
 
 #+begin_src emacs-lisp
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
+(setq doom-theme 'wombat)
 #+end_src
+
+Likes:
+- doom-1337
+- doom-homage-black
+- doom-monokai-pro
+- wombat
 
 ** Packages
 *** Deft
@@ -414,7 +423,6 @@ Export in Jira / Confluence markup format
 #+end_src
 **** TODO org-jira
 https://github.com/ahungry/org-jira
-
 
 *** Org-journal
 **** Format Journals
