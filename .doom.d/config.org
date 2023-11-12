@@ -417,6 +417,7 @@ https://github.com/ahungry/org-jira
 
 
 *** Org-journal
+**** Format Journals
 
 Format Org-Journal entries
 
@@ -425,4 +426,45 @@ Format Org-Journal entries
       org-journal-time-prefix "* "
       org-journal-file-format "%Y-%m-%d.org")
 
+#+end_src
+
+Define TODO keywords. Default is:
+- TODO(t): The task needs to be done.
+- PROJ(p): The task is a project, which is a task with subtasks.
+- LOOP(r): The task is recurring and will be repeated.
+- STRT(s): The task has been started.
+- WAIT(w): The task is waiting for something else to happen before it can proceed.
+- HOLD(h): The task is passed or on hold.
+- IDEA(i): The task is still an idea an hasn't been brought into action yet. Could used for tasks still being considered -> someday/maybe list in GTD
+- |
+- DONE(d): The task has been completed.
+- KILL(k): The task has been cancelled.
+- [ ], [-], [?] | [X]: These are used for checkbox items.
+- OKAY(o), YES(y) | NO(n): These might be used for tasks that require a simple binary (yes/no) or ternary (yes/no/okay) response.
+
+To change the state, just use ~SPC m t~ (~org-todo~) and the shortcut key.
+
+**** Multiple Journals
+
+Keep folders for a separate personal and work (jowo) journal and allow to switch between them.
+
+#+begin_src emacs-lisp
+(defun switch-to-personal-journal ()
+  (interactive)
+  ; file-name-as-directory ensures that org-directory ends with a slash
+  (setq org-journal-dir (concat (file-name-as-directory org-directory) "journals/personal/")))
+
+(defun switch-to-jowo-journal ()
+  (interactive)
+  (setq org-journal-dir (concat (file-name-as-directory org-directory) "journals/jowo/")))
+#+end_src
+
+Create new keybindings to create personal entries with ~SPC n j j~ and  new Jowo entries with ~SPC n j w~.
+
+#+begin_src emacs-lisp
+(map! :leader
+     (:prefix ("n" . "notes")
+      (:prefix ("j" . "journal")
+       :desc "New personal journal entry" "j" (lambda () (interactive) (switch-to-personal-journal) (org-journal-new-entry nil))
+       :desc "New work (jowo) journal entry" "w" (lambda () (interactive) (switch-to-jowo-journal) (org-journal-new-entry nil)))))
 #+end_src

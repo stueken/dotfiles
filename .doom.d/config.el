@@ -183,3 +183,18 @@
 (setq org-journal-date-prefix "#+TITLE: "
       org-journal-time-prefix "* "
       org-journal-file-format "%Y-%m-%d.org")
+
+(defun switch-to-personal-journal ()
+  (interactive)
+  ; file-name-as-directory ensures that org-directory ends with a slash
+  (setq org-journal-dir (concat (file-name-as-directory org-directory) "journals/personal/")))
+
+(defun switch-to-jowo-journal ()
+  (interactive)
+  (setq org-journal-dir (concat (file-name-as-directory org-directory) "journals/jowo/")))
+
+(map! :leader
+     (:prefix ("n" . "notes")
+      (:prefix ("j" . "journal")
+       :desc "New personal journal entry" "j" (lambda () (interactive) (switch-to-personal-journal) (org-journal-new-entry nil))
+       :desc "New work (jowo) journal entry" "w" (lambda () (interactive) (switch-to-jowo-journal) (org-journal-new-entry nil)))))
