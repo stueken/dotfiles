@@ -62,7 +62,7 @@ end
 
 local on_attach = function(client)
     -- autoformat python and lua files when saving files
-    if client.resolved_capabilities.document_formatting then
+    if client.server_capabilities.document_formatting then
         for _, v in pairs(format_filetypes_on_save) do
             if v == vim.bo.filetype then
                 vim.cmd("autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()")
