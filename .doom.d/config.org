@@ -423,6 +423,14 @@ Export in Jira / Confluence markup format
 #+end_src
 **** TODO org-jira
 https://github.com/ahungry/org-jira
+**** reStructuredText (ReST)
+https://github.com/msnoigrs/ox-rst
+
+#+begin_src emacs-lisp
+;; Ensure ox-rst is loaded when org-mode starts.
+(after! org
+  (require 'ox-rst))
+#+end_src
 
 *** Org-journal
 **** Format Journals

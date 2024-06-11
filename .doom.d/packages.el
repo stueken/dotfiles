@@ -51,6 +51,8 @@
 (package! ob-mermaid)
 (package! org-super-agenda)
 (package! ox-jira)
+;; Add ability to export to reStructuredText
+(package! ox-rst)
 
 ;; TODO Remove if fixed
 ;; Temporary fix as files with links are not scanned by org-roam-db-sync

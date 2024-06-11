@@ -180,6 +180,10 @@
 (use-package! ox-jira
   :after org)
 
+;; Ensure ox-rst is loaded when org-mode starts.
+(after! org
+  (require 'ox-rst))
+
 (setq org-journal-date-prefix "#+TITLE: "
       org-journal-time-prefix "* "
       org-journal-file-format "%Y-%m-%d.org")
