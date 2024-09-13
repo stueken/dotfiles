@@ -48,6 +48,8 @@
 
 (org-roam-db-autosync-mode)
 
+(setq org-capture-templates nil)
+
 (setq org-roam-capture-templates
   '(("m" "main" plain "%?"
    :if-new (file+head "main/${slug}.org"
