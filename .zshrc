@@ -195,6 +195,9 @@ export PATH="$HOME/doom-emacs/bin:$PATH"
 # from mapool dev setup, check the reason behind that
 alias pip='noglob pip'
 
+#  conditional start of the SSH agent if not already running
+[ -z "$SSH_AUTH_SOCK" ] && eval "$(ssh-agent -s)"
+
 # Enable pyenv shims and autocompletion
 # NOTE: Must be placed toward the end since it manipulates PATH during init
 # old
