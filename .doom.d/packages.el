@@ -49,7 +49,7 @@
 ;(unpin! t)
 
 (package! ob-mermaid)
-(package! org-super-agenda)
+;; (package! org-super-agenda)
 (package! ox-jira)
 ;; Add ability to export to reStructuredText
 (package! ox-rst)
@@ -69,5 +69,3 @@
 ;; see https://github.com/org-roam/org-roam-ui#doom
 (unpin! org-roam)
 (package! org-roam-ui)
-
-

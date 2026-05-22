@@ -87,7 +87,8 @@
 
        :tools
        ;;ansible           ; TODO
-       ;;biblio            ; Writes a PhD for you (citation needed)
+       (biblio            ; Writes a PhD for you (citation needed)
+        +icons)
        ;;debugger          ; FIXME stepping through code, to help you add bugs
        ;;direnv            ; TODO
        ;;docker            ; TODO

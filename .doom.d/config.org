@@ -206,6 +206,7 @@ Use [[https://github.com/awth13/org-appear][org-appear]] to show hidden emphasis
   (use-package! org-appear
     :hook (org-mode . org-appear-mode)))
 #+end_src
+
 ** Babel
 Add Mermaid.js Org mode integration: [[https://github.com/arnm/ob-mermaid][ob-mermaid]]
 
@@ -249,7 +250,7 @@ Change the file name format by modifying the ~org-roam-capture-templates~ variab
 	 :unnarrowed t)
   ("j" "jowo" plain "%?"
    :if-new (file+head "jowo/${slug}.org"
-			    "#+title: ${title}\n#+TODO: TODO NEXT IN-PROGRESS ON-HOLD | DONE CANCEL\n")
+			    "#+title: ${title}\n")
    :immediate-finish t
 	 :unnarrowed t)
   ("p" "personal" plain "%?"
@@ -375,14 +376,313 @@ The ~generate-slug-from-file-title function~ extracts the title property from th
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
 #+end_src
-*** TODO Tasks and agenda
+*** Literature Management
+Setup with biblio module: https://github.com/doomemacs/doomemacs/tree/master/modules/tools/biblio
 
+The doom-package:citar (for vertico completion) provides an extensive range of features like:
+
+- bibliography management
+- notes per reference
+- citation support
+- citation lookup
+- org integration for writing literate latex (org-roam)
+- fast indexing and searching of references
+
+In addition, this module provides support for native Org-mode citations (doom-package:org-cite).
+To learn more about org-cite, see the org manual: https://orgmode.org/manual/Citations.html
+
+See for more detail on Citar: https://github.com/emacs-citar/citar and https://github.com/emacs-citar/citar/wiki
+For a comparison to other packages, see: https://github.com/emacs-citar/citar/wiki/Comparisons
+
+
+**** Org-cite configuration
+Look in the Zotero style directory for [[https://citationstyles.org/][CSL styles]]:
+
+#+begin_src emacs-lisp
+(setq org-cite-csl-styles-dir "~/Zotero/styles")
+#+end_src
+
+**** STRT Path configuration
+Set the path variable for doom-package:citar for the bibliography as well as folders for library files and notes.
+
+#+begin_src emacs-lisp
+(setq! citar-bibliography (list (concat org-directory "ref/references.bib"))
+       citar-library-paths (list (concat org-directory "ref/library_files/"))
+       citar-notes-paths (concat org-directory "ref/notes/"))
+#+end_src
+
+**** TODO Activate icons
+https://github.com/emacs-citar/citar/wiki/Indicators
+
+**** TODO Open source data entry in Zotero
+citar-open-entry-in-zotero
+
+*** TODO Tasks and agenda
+**** Overview
+
+Move task management from =org-journal= to =org-agenda=.
+
+Use =org-journal= mainly for daily logs, notes, and short-lived daily items.
+Use =org-agenda= with separate GTD directories for personal and Jowo tasks.
+
+Task states are kept intentionally small but expressive:
+
+- =TODO=: task exists
+- =NEXT=: next concrete action
+- =STRT=: task has been started
+- =WAIT=: task is blocked or waiting
+- =DONE=: finished
+- =KILL=: cancelled
+
+Tasks should usually live in GTD files, not in journal files.
+Journal entries are mainly context, notes, and daily planning.
+
+**** Workflow
+
+Define global Org TODO states for all Org files.
+
+Use short state keywords to keep agenda views compact. This also keeps the
+workflow compatible with the previous journal-based setup where =STRT= was
+already used.
+
+#+begin_src emacs-lisp
+(after! org
+  (setq org-todo-keywords
+        '((sequence
+           "TODO(t)"
+           "NEXT(n)"
+           "STRT(s)"
+           "WAIT(w)"
+           "|"
+           "DONE(d)"
+           "KILL(k)"))))
+#+end_src
+
+**** GTD directories
+
+Define separate GTD directories for personal and Jowo tasks.
+
+This keeps both contexts isolated and makes it easy to switch agenda scope
+depending on whether the current focus is private or employer-specific.
+
+#+begin_src emacs-lisp
+(defvar nrbrt/org-gtd-directory
+  (expand-file-name "gtd/" org-directory)
+  "Base directory for GTD files.")
+
+(defvar nrbrt/org-gtd-personal-directory
+  (expand-file-name "personal/" nrbrt/org-gtd-directory)
+  "Directory for personal GTD files.")
+
+(defvar nrbrt/org-gtd-jowo-directory
+  (expand-file-name "jowo/" nrbrt/org-gtd-directory)
+  "Directory for Jowo GTD files.")
+#+end_src
+
+**** Logging and task metadata
+
+Store task history in a drawer and record when tasks are finished.
+Also provide a helper to add a =CREATED= property to new headings.
+
+The goal is to keep metadata available for later review and reporting without
+adding too much visual noise to everyday work.
+
+#+begin_src emacs-lisp
+(after! org
+  (setq org-log-done 'time
+        org-log-into-drawer t))
+#+end_src
+
+Add a helper function to create a =CREATED= property on the current heading.
+
+#+begin_src emacs-lisp
+(defun nrbrt/org-set-created-property ()
+  "Set a CREATED property on the current Org heading if it does not exist."
+  (when (org-at-heading-p)
+    (unless (org-entry-get nil "CREATED")
+      (org-set-property "CREATED"
+                        (format-time-string
+                         (org-time-stamp-format t t))))))
+#+end_src
+
+Add the =CREATED= property automatically for new entries created via capture.
+
+#+begin_src emacs-lisp
+(defun nrbrt/org-capture-set-created-property ()
+  "Set CREATED property on a newly captured Org entry."
+  (when (derived-mode-p 'org-mode)
+    (save-excursion
+      (org-back-to-heading t)
+      (nrbrt/org-set-created-property))))
+
+(add-hook 'org-capture-after-finalize-hook
+          #'nrbrt/org-capture-set-created-property)
+#+end_src
+
+For manually created tasks, the =CREATED= property can be added explicitly with a
+custom helper command later if needed. Start simple first.
+
+**** Agenda file switching
+
+Switch agenda scope between personal and Jowo GTD files.
+
+This matches the intended workflow: usually only one context is active at a
+time, either personal or employer-specific.
+
+#+begin_src emacs-lisp
+(defun nrbrt/set-org-agenda-files-personal ()
+  "Use personal GTD files for `org-agenda-files`."
+  (interactive)
+  (setq org-agenda-files
+        (directory-files-recursively
+         nrbrt/org-gtd-personal-directory "\\.org$"))
+  (message "Using personal agenda files"))
+
+(defun nrbrt/set-org-agenda-files-jowo ()
+  "Use Jowo GTD files for `org-agenda-files`."
+  (interactive)
+  (setq org-agenda-files
+        (directory-files-recursively
+         nrbrt/org-gtd-jowo-directory "\\.org$"))
+  (message "Using Jowo agenda files"))
+#+end_src
+
+Use personal GTD files as the default agenda scope on startup.
+
+#+begin_src emacs-lisp
+(after! org
+  (nrbrt/set-org-agenda-files-personal))
+#+end_src
+
+**** Refile targets
+
+Define refile targets for the GTD system.
+
+This supports moving tasks out of journals, inboxes, and temporary notes into
+their final destination files.
+
+#+begin_src emacs-lisp
+(after! org
+  (setq org-refile-targets
+        `((,(expand-file-name "tasks.org"
+                              nrbrt/org-gtd-personal-directory) :maxlevel . 3)
+          (,(expand-file-name "projects.org"
+                              nrbrt/org-gtd-personal-directory) :maxlevel . 3)
+          (,(expand-file-name "someday.org"
+                              nrbrt/org-gtd-personal-directory) :maxlevel . 2)
+          (,(expand-file-name "tasks.org"
+                              nrbrt/org-gtd-jowo-directory) :maxlevel . 3)
+          (,(expand-file-name "projects.org"
+                              nrbrt/org-gtd-jowo-directory) :maxlevel . 3)
+          (,(expand-file-name "someday.org"
+                              nrbrt/org-gtd-jowo-directory) :maxlevel . 2)))
+
+  (setq org-refile-use-outline-path 'file
+        org-outline-path-complete-in-steps nil
+        org-refile-allow-creating-parent-nodes 'confirm))
+#+end_src
+
+Use =tasks.org= for single actionable items, =projects.org= for larger
+multi-step efforts, and =someday.org= for ideas without current commitment.
+
+=inbox.org= is reserved for capture and should not become a permanent storage
+location during migration.
+
+**** Custom agenda commands
+
+Start with a small set of agenda commands.
+
+The goal is to keep the workflow easy to understand before adding more advanced
+views or grouping logic.
+
+#+begin_src emacs-lisp
+(after! org
+  (setq org-agenda-custom-commands
+        '(("n" "Next tasks"
+           todo "NEXT")
+
+          ("s" "Started tasks"
+           todo "STRT")
+
+          ("w" "Waiting tasks"
+           todo "WAIT")
+
+          ("d" "Dashboard"
+           ((agenda "")
+            (todo "STRT")
+            (todo "NEXT")
+            (todo "WAIT"))))))
+#+end_src
+
+**** Keybindings
+***** Define helper keybindings for switching agenda scope quickly.
+
+#+begin_src emacs-lisp
+(map! :leader
+      (:prefix ("o" . "open")
+       (:prefix ("a" . "agenda")
+        :desc "Use personal agenda files" "p"
+        #'nrbrt/set-org-agenda-files-personal
+        :desc "Use Jowo agenda files" "j"
+        #'nrbrt/set-org-agenda-files-jowo
+        :desc "Open agenda" "a"
+        #'org-agenda)))
+#+end_src
+
+**** Add a dedicated keybinding for adding notes to Org headings.
+
+The default Doom binding =SPC m n= is used for ~org-store-link~, which is
+useful for creating precise links to specific locations (e.g. headings, code
+positions, or files). This is especially valuable in combination with
+=org-roam= and should therefore be preserved.
+
+Instead of overriding it, assign ~org-add-note~ to an uppercase variant to keep
+both features easily accessible:
+
+- =SPC m n=: store a link to the current location
+- =SPC m N=: add a note (e.g. for WAIT or KILL context)
+
+#+begin_src emacs-lisp
+(map! :after org
+      :map org-mode-map
+      :localleader
+      "N" #'org-add-note)
+#+end_src
+
+
+***** Useful default commands:
+
+- =SPC o A a=: open agenda
+- =SPC o A p=: switch to personal agenda files
+- =SPC o A j=: switch to Jowo agenda files
+- =C-c C-w=: standard Org refile
+- =SPC m r=: Doom refile command
+- =SPC m t=: change TODO state
+**** 
+**** Migration notes
+
+Migration should be done incrementally.
+
+Recommended order:
+
+1. Create GTD files for personal and Jowo contexts.
+2. Enable global TODO states and agenda switching.
+3. Move open journal tasks to their long-term GTD destination:
+   - =tasks.org=
+   - =projects.org=
+   - =someday.org=
+4. Refile useful entries from =agenda.org= and =errands.org= as well.
+5. Keep =inbox.org= mainly for capture going forward.
+6. Use journal mainly for daily context, notes, and short-lived day planning.
+   
+**** TODO Check out later
 [[https://github.com/alphapapa/org-super-agenda][org-super-agenda]] provides great grouping and customization features to make agenda mode easier to use.
 
 Macro used for package configuration
 Example from Emacs Doom E05
 
-#+begin_src emacs-lisp
+TODO Start with normal agenda first
+#+begin_src emacs-lisp :tangle no
 (use-package! org-super-agenda
   ;should load after org-agenda
   :after org-agenda

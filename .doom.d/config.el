@@ -58,7 +58,7 @@
 	 :unnarrowed t)
   ("j" "jowo" plain "%?"
    :if-new (file+head "jowo/${slug}.org"
-			    "#+title: ${title}\n#+TODO: TODO NEXT IN-PROGRESS ON-HOLD | DONE CANCEL\n")
+			    "#+title: ${title}\n")
    :immediate-finish t
 	 :unnarrowed t)
   ("p" "personal" plain "%?"
@@ -155,25 +155,126 @@
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
 
-(use-package! org-super-agenda
-  ;should load after org-agenda
-  :after org-agenda
-  :init
-  (setq org-super-agenda-groups '((:name "Today"
-                                         :time-grid t
-                                         :scheduled today)
-                                  (:name "Due today"
-                                         :deadline today)
-                                  (:name "Important"
-                                         :priority "A")
-                                  (:name "Overdue"
-                                         :deadline past)
-                                  (:name "Due soon"
-                                         :deadline future)
-                                  (:name "Big Outcomes"
-                                         :tag "bo")))
-  :config
-  (org-super-agenda-mode))
+(setq org-cite-csl-styles-dir "~/Zotero/styles")
+
+(setq! citar-bibliography (list (concat org-directory "ref/references.bib"))
+       citar-library-paths (list (concat org-directory "ref/library_files/"))
+       citar-notes-paths (concat org-directory "ref/notes/"))
+
+(after! org
+  (setq org-todo-keywords
+        '((sequence
+           "TODO(t)"
+           "NEXT(n)"
+           "STRT(s)"
+           "WAIT(w)"
+           "|"
+           "DONE(d)"
+           "KILL(k)"))))
+
+(defvar nrbrt/org-gtd-directory
+  (expand-file-name "gtd/" org-directory)
+  "Base directory for GTD files.")
+
+(defvar nrbrt/org-gtd-personal-directory
+  (expand-file-name "personal/" nrbrt/org-gtd-directory)
+  "Directory for personal GTD files.")
+
+(defvar nrbrt/org-gtd-jowo-directory
+  (expand-file-name "jowo/" nrbrt/org-gtd-directory)
+  "Directory for Jowo GTD files.")
+
+(after! org
+  (setq org-log-done 'time
+        org-log-into-drawer t))
+
+(defun nrbrt/org-set-created-property ()
+  "Set a CREATED property on the current Org heading if it does not exist."
+  (when (org-at-heading-p)
+    (unless (org-entry-get nil "CREATED")
+      (org-set-property "CREATED"
+                        (format-time-string
+                         (org-time-stamp-format t t))))))
+
+(defun nrbrt/org-capture-set-created-property ()
+  "Set CREATED property on a newly captured Org entry."
+  (when (derived-mode-p 'org-mode)
+    (save-excursion
+      (org-back-to-heading t)
+      (nrbrt/org-set-created-property))))
+
+(add-hook 'org-capture-after-finalize-hook
+          #'nrbrt/org-capture-set-created-property)
+
+(defun nrbrt/set-org-agenda-files-personal ()
+  "Use personal GTD files for `org-agenda-files`."
+  (interactive)
+  (setq org-agenda-files
+        (directory-files-recursively
+         nrbrt/org-gtd-personal-directory "\\.org$"))
+  (message "Using personal agenda files"))
+
+(defun nrbrt/set-org-agenda-files-jowo ()
+  "Use Jowo GTD files for `org-agenda-files`."
+  (interactive)
+  (setq org-agenda-files
+        (directory-files-recursively
+         nrbrt/org-gtd-jowo-directory "\\.org$"))
+  (message "Using Jowo agenda files"))
+
+(after! org
+  (nrbrt/set-org-agenda-files-personal))
+
+(after! org
+  (setq org-refile-targets
+        `((,(expand-file-name "tasks.org"
+                              nrbrt/org-gtd-personal-directory) :maxlevel . 3)
+          (,(expand-file-name "projects.org"
+                              nrbrt/org-gtd-personal-directory) :maxlevel . 3)
+          (,(expand-file-name "someday.org"
+                              nrbrt/org-gtd-personal-directory) :maxlevel . 2)
+          (,(expand-file-name "tasks.org"
+                              nrbrt/org-gtd-jowo-directory) :maxlevel . 3)
+          (,(expand-file-name "projects.org"
+                              nrbrt/org-gtd-jowo-directory) :maxlevel . 3)
+          (,(expand-file-name "someday.org"
+                              nrbrt/org-gtd-jowo-directory) :maxlevel . 2)))
+
+  (setq org-refile-use-outline-path 'file
+        org-outline-path-complete-in-steps nil
+        org-refile-allow-creating-parent-nodes 'confirm))
+
+(after! org
+  (setq org-agenda-custom-commands
+        '(("n" "Next tasks"
+           todo "NEXT")
+
+          ("s" "Started tasks"
+           todo "STRT")
+
+          ("w" "Waiting tasks"
+           todo "WAIT")
+
+          ("d" "Dashboard"
+           ((agenda "")
+            (todo "STRT")
+            (todo "NEXT")
+            (todo "WAIT"))))))
+
+(map! :leader
+      (:prefix ("o" . "open")
+       (:prefix ("a" . "agenda")
+        :desc "Use personal agenda files" "p"
+        #'nrbrt/set-org-agenda-files-personal
+        :desc "Use Jowo agenda files" "j"
+        #'nrbrt/set-org-agenda-files-jowo
+        :desc "Open agenda" "a"
+        #'org-agenda)))
+
+(map! :after org
+      :map org-mode-map
+      :localleader
+      "N" #'org-add-note)
 
 (after! org-clock
   (setq org-clock-persist t)
