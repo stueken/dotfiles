@@ -184,6 +184,38 @@
   (expand-file-name "jowo/" nrbrt/org-gtd-directory)
   "Directory for Jowo GTD files.")
 
+(defvar nrbrt/org-gtd-personal-inbox-file
+  (expand-file-name "inbox.org" nrbrt/org-gtd-personal-directory)
+  "Personal GTD inbox file.")
+
+(defvar nrbrt/org-gtd-personal-tasks-file
+  (expand-file-name "tasks.org" nrbrt/org-gtd-personal-directory)
+  "Personal GTD tasks file.")
+
+(defvar nrbrt/org-gtd-personal-projects-file
+  (expand-file-name "projects.org" nrbrt/org-gtd-personal-directory)
+  "Personal GTD projects file.")
+
+(defvar nrbrt/org-gtd-personal-someday-file
+  (expand-file-name "someday.org" nrbrt/org-gtd-personal-directory)
+  "Personal GTD someday file.")
+
+(defvar nrbrt/org-gtd-jowo-inbox-file
+  (expand-file-name "inbox.org" nrbrt/org-gtd-jowo-directory)
+  "Jowo GTD inbox file.")
+
+(defvar nrbrt/org-gtd-jowo-tasks-file
+  (expand-file-name "tasks.org" nrbrt/org-gtd-jowo-directory)
+  "Jowo GTD tasks file.")
+
+(defvar nrbrt/org-gtd-jowo-projects-file
+  (expand-file-name "projects.org" nrbrt/org-gtd-jowo-directory)
+  "Jowo GTD projects file.")
+
+(defvar nrbrt/org-gtd-jowo-someday-file
+  (expand-file-name "someday.org" nrbrt/org-gtd-jowo-directory)
+  "Jowo GTD someday file.")
+
 (after! org
   (setq org-log-done 'time
         org-log-into-drawer t))
@@ -227,22 +259,46 @@
 
 (after! org
   (setq org-refile-targets
-        `((,(expand-file-name "tasks.org"
-                              nrbrt/org-gtd-personal-directory) :maxlevel . 3)
-          (,(expand-file-name "projects.org"
-                              nrbrt/org-gtd-personal-directory) :maxlevel . 3)
-          (,(expand-file-name "someday.org"
-                              nrbrt/org-gtd-personal-directory) :maxlevel . 2)
-          (,(expand-file-name "tasks.org"
-                              nrbrt/org-gtd-jowo-directory) :maxlevel . 3)
-          (,(expand-file-name "projects.org"
-                              nrbrt/org-gtd-jowo-directory) :maxlevel . 3)
-          (,(expand-file-name "someday.org"
-                              nrbrt/org-gtd-jowo-directory) :maxlevel . 2)))
+        `((,nrbrt/org-gtd-personal-tasks-file :maxlevel . 3)
+          (,nrbrt/org-gtd-personal-projects-file :maxlevel . 3)
+          (,nrbrt/org-gtd-personal-someday-file :maxlevel . 3)
+
+          (,nrbrt/org-gtd-jowo-tasks-file :maxlevel . 3)
+          (,nrbrt/org-gtd-jowo-projects-file :maxlevel . 3)
+          (,nrbrt/org-gtd-jowo-someday-file :maxlevel . 3)))
 
   (setq org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil
-        org-refile-allow-creating-parent-nodes 'confirm))
+        org-refile-allow-creating-parent-nodes 'confirm
+        org-refile-use-cache nil))
+
+(after! org
+  (setq org-default-notes-file nrbrt/org-gtd-personal-inbox-file)
+
+  (setq org-capture-templates
+        `(("p" "Personal inbox"
+           entry
+           (file ,nrbrt/org-gtd-personal-inbox-file)
+           "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n%i"
+           :empty-lines 1)
+
+          ("P" "Personal inbox with context"
+           entry
+           (file ,nrbrt/org-gtd-personal-inbox-file)
+           "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n%i\n%a"
+           :empty-lines 1)
+
+          ("j" "Jowo inbox"
+           entry
+           (file ,nrbrt/org-gtd-jowo-inbox-file)
+           "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n%i"
+           :empty-lines 1)
+
+          ("J" "Jowo inbox with context"
+           entry
+           (file ,nrbrt/org-gtd-jowo-inbox-file)
+           "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n%i\n%a"
+           :empty-lines 1))))
 
 (after! org
   (setq org-agenda-custom-commands

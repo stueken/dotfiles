@@ -462,8 +462,8 @@ already used.
 
 Define separate GTD directories for personal and Jowo tasks.
 
-This keeps both contexts isolated and makes it easy to switch agenda scope
-depending on whether the current focus is private or employer-specific.
+This keeps both contexts isolated and makes it easy to switch agenda scope,
+refile tasks, and capture new items into the right inbox.
 
 #+begin_src emacs-lisp
 (defvar nrbrt/org-gtd-directory
@@ -477,6 +477,38 @@ depending on whether the current focus is private or employer-specific.
 (defvar nrbrt/org-gtd-jowo-directory
   (expand-file-name "jowo/" nrbrt/org-gtd-directory)
   "Directory for Jowo GTD files.")
+
+(defvar nrbrt/org-gtd-personal-inbox-file
+  (expand-file-name "inbox.org" nrbrt/org-gtd-personal-directory)
+  "Personal GTD inbox file.")
+
+(defvar nrbrt/org-gtd-personal-tasks-file
+  (expand-file-name "tasks.org" nrbrt/org-gtd-personal-directory)
+  "Personal GTD tasks file.")
+
+(defvar nrbrt/org-gtd-personal-projects-file
+  (expand-file-name "projects.org" nrbrt/org-gtd-personal-directory)
+  "Personal GTD projects file.")
+
+(defvar nrbrt/org-gtd-personal-someday-file
+  (expand-file-name "someday.org" nrbrt/org-gtd-personal-directory)
+  "Personal GTD someday file.")
+
+(defvar nrbrt/org-gtd-jowo-inbox-file
+  (expand-file-name "inbox.org" nrbrt/org-gtd-jowo-directory)
+  "Jowo GTD inbox file.")
+
+(defvar nrbrt/org-gtd-jowo-tasks-file
+  (expand-file-name "tasks.org" nrbrt/org-gtd-jowo-directory)
+  "Jowo GTD tasks file.")
+
+(defvar nrbrt/org-gtd-jowo-projects-file
+  (expand-file-name "projects.org" nrbrt/org-gtd-jowo-directory)
+  "Jowo GTD projects file.")
+
+(defvar nrbrt/org-gtd-jowo-someday-file
+  (expand-file-name "someday.org" nrbrt/org-gtd-jowo-directory)
+  "Jowo GTD someday file.")
 #+end_src
 
 **** Logging and task metadata
@@ -558,28 +590,28 @@ Use personal GTD files as the default agenda scope on startup.
 
 Define refile targets for the GTD system.
 
-This supports moving tasks out of journals, inboxes, and temporary notes into
-their final destination files.
+Refile is used to move tasks out of journals, inboxes, and temporary notes into
+their final GTD destination files.
+
+Unlike opening files, refile does not browse directories. It completes against
+the targets listed in =org-refile-targets=. Therefore all relevant GTD files
+must be listed explicitly.
 
 #+begin_src emacs-lisp
 (after! org
   (setq org-refile-targets
-        `((,(expand-file-name "tasks.org"
-                              nrbrt/org-gtd-personal-directory) :maxlevel . 3)
-          (,(expand-file-name "projects.org"
-                              nrbrt/org-gtd-personal-directory) :maxlevel . 3)
-          (,(expand-file-name "someday.org"
-                              nrbrt/org-gtd-personal-directory) :maxlevel . 2)
-          (,(expand-file-name "tasks.org"
-                              nrbrt/org-gtd-jowo-directory) :maxlevel . 3)
-          (,(expand-file-name "projects.org"
-                              nrbrt/org-gtd-jowo-directory) :maxlevel . 3)
-          (,(expand-file-name "someday.org"
-                              nrbrt/org-gtd-jowo-directory) :maxlevel . 2)))
+        `((,nrbrt/org-gtd-personal-tasks-file :maxlevel . 3)
+          (,nrbrt/org-gtd-personal-projects-file :maxlevel . 3)
+          (,nrbrt/org-gtd-personal-someday-file :maxlevel . 3)
+
+          (,nrbrt/org-gtd-jowo-tasks-file :maxlevel . 3)
+          (,nrbrt/org-gtd-jowo-projects-file :maxlevel . 3)
+          (,nrbrt/org-gtd-jowo-someday-file :maxlevel . 3)))
 
   (setq org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil
-        org-refile-allow-creating-parent-nodes 'confirm))
+        org-refile-allow-creating-parent-nodes 'confirm
+        org-refile-use-cache nil))
 #+end_src
 
 Use =tasks.org= for single actionable items, =projects.org= for larger
@@ -588,7 +620,55 @@ multi-step efforts, and =someday.org= for ideas without current commitment.
 =inbox.org= is reserved for capture and should not become a permanent storage
 location during migration.
 
+**** Capture templates
+
+Capture should be fast and boring.
+
+New tasks are captured into the inbox of the selected context and are reviewed
+later. This keeps capture lightweight and prevents decision fatigue while still
+supporting the GTD workflow.
+
+Use:
+
+- =p=: personal inbox
+- =P=: personal inbox with context link
+- =j=: Jowo inbox
+- =J=: Jowo inbox with context link
+
+#+begin_src emacs-lisp
+(after! org
+  (setq org-default-notes-file nrbrt/org-gtd-personal-inbox-file)
+
+  (setq org-capture-templates
+        `(("p" "Personal inbox"
+           entry
+           (file ,nrbrt/org-gtd-personal-inbox-file)
+           "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n%i"
+           :empty-lines 1)
+
+          ("P" "Personal inbox with context"
+           entry
+           (file ,nrbrt/org-gtd-personal-inbox-file)
+           "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n%i\n%a"
+           :empty-lines 1)
+
+          ("j" "Jowo inbox"
+           entry
+           (file ,nrbrt/org-gtd-jowo-inbox-file)
+           "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n%i"
+           :empty-lines 1)
+
+          ("J" "Jowo inbox with context"
+           entry
+           (file ,nrbrt/org-gtd-jowo-inbox-file)
+           "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n%i\n%a"
+           :empty-lines 1))))
+#+end_src
+
 **** Custom agenda commands
+:PROPERTIES:
+:CREATED:  [2026-05-23 Sa 20:50]
+:END:
 
 Start with a small set of agenda commands.
 
@@ -615,7 +695,33 @@ views or grouping logic.
 #+end_src
 
 **** Keybindings
+
+Document the most important default and custom keybindings for the GTD workflow.
+
+***** Useful default commands
+:PROPERTIES:
+:CREATED:  [2026-05-23 Sa 20:57]
+:END:
+
+- =SPC X=: capture
+- =SPC o a a=: open agenda
+- =SPC o a p=: switch to personal agenda files
+- =SPC o a j=: switch to Jowo agenda files
+- =SPC m r f=: refile current heading
+- =SPC m t=: change TODO state
+- =SPC m q=: set tags
+- =SPC m d s=: schedule
+- =SPC m d d=: deadline
+- =SPC m I=: create Org ID
+- =SPC m A=: archive subtree
+- =SPC m #=: update statistics cookies
+- =SPC s m n=: narrow to subtree
+- =SPC s m N=: widen
+
 ***** Define helper keybindings for switching agenda scope quickly.
+:PROPERTIES:
+:CREATED:  [2026-05-23 Sa 20:55]
+:END:
 
 #+begin_src emacs-lisp
 (map! :leader
@@ -629,7 +735,7 @@ views or grouping logic.
         #'org-agenda)))
 #+end_src
 
-**** Add a dedicated keybinding for adding notes to Org headings.
+***** Add a dedicated keybinding for adding notes to Org headings.
 
 The default Doom binding =SPC m n= is used for ~org-store-link~, which is
 useful for creating precise links to specific locations (e.g. headings, code
@@ -649,16 +755,6 @@ both features easily accessible:
       "N" #'org-add-note)
 #+end_src
 
-
-***** Useful default commands:
-
-- =SPC o A a=: open agenda
-- =SPC o A p=: switch to personal agenda files
-- =SPC o A j=: switch to Jowo agenda files
-- =C-c C-w=: standard Org refile
-- =SPC m r=: Doom refile command
-- =SPC m t=: change TODO state
-**** 
 **** Migration notes
 
 Migration should be done incrementally.
