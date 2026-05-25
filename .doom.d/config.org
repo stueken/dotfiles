@@ -708,6 +708,7 @@ Document the most important default and custom keybindings for the GTD workflow.
 - =SPC o a p=: switch to personal GTD context
 - =SPC o a j=: switch to Jowo GTD context
 - =SPC m s r=: GTD refile using configured targets
+- =SPC m r f=: refile current subtree to selected org file
 - =SPC m t=: change TODO state
 - =SPC m q=: set tags
 - =SPC m d s=: schedule
