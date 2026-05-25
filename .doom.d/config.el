@@ -347,6 +347,10 @@
 (after! org
   (require 'ox-rst))
 
+(setq org-journal-date-prefix "#+TITLE: "
+      org-journal-time-prefix "* "
+      org-journal-file-format "%Y-%m-%d.org")
+
 (defun switch-to-personal-journal ()
   (interactive)
   ; file-name-as-directory ensures that org-directory ends with a slash

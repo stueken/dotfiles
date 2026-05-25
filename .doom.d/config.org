@@ -838,7 +838,7 @@ https://github.com/msnoigrs/ox-rst
 
 Format Org-Journal entries
 
-+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (setq org-journal-date-prefix "#+TITLE: "
       org-journal-time-prefix "* "
       org-journal-file-format "%Y-%m-%d.org")
