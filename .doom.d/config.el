@@ -238,36 +238,40 @@
 (add-hook 'org-capture-after-finalize-hook
           #'nrbrt/org-capture-set-created-property)
 
-(defun nrbrt/set-org-agenda-files-personal ()
-  "Use personal GTD files for `org-agenda-files`."
+(defun nrbrt/set-org-gtd-context-personal ()
+  "Use personal GTD files for agenda and refile."
   (interactive)
   (setq org-agenda-files
-        (directory-files-recursively
-         nrbrt/org-gtd-personal-directory "\\.org$"))
-  (message "Using personal agenda files"))
-
-(defun nrbrt/set-org-agenda-files-jowo ()
-  "Use Jowo GTD files for `org-agenda-files`."
-  (interactive)
-  (setq org-agenda-files
-        (directory-files-recursively
-         nrbrt/org-gtd-jowo-directory "\\.org$"))
-  (message "Using Jowo agenda files"))
-
-(after! org
-  (nrbrt/set-org-agenda-files-personal))
-
-(after! org
+        (list nrbrt/org-gtd-personal-inbox-file
+              nrbrt/org-gtd-personal-tasks-file
+              nrbrt/org-gtd-personal-projects-file
+              nrbrt/org-gtd-personal-someday-file))
   (setq org-refile-targets
         `((,nrbrt/org-gtd-personal-tasks-file :maxlevel . 3)
           (,nrbrt/org-gtd-personal-projects-file :maxlevel . 3)
-          (,nrbrt/org-gtd-personal-someday-file :maxlevel . 3)
+          (,nrbrt/org-gtd-personal-someday-file :maxlevel . 3)))
+  (message "Using personal GTD context"))
 
-          (,nrbrt/org-gtd-jowo-tasks-file :maxlevel . 3)
+(defun nrbrt/set-org-gtd-context-jowo ()
+  "Use Jowo GTD files for agenda and refile."
+  (interactive)
+  (setq org-agenda-files
+        (list nrbrt/org-gtd-jowo-inbox-file
+              nrbrt/org-gtd-jowo-tasks-file
+              nrbrt/org-gtd-jowo-projects-file
+              nrbrt/org-gtd-jowo-someday-file))
+  (setq org-refile-targets
+        `((,nrbrt/org-gtd-jowo-tasks-file :maxlevel . 3)
           (,nrbrt/org-gtd-jowo-projects-file :maxlevel . 3)
           (,nrbrt/org-gtd-jowo-someday-file :maxlevel . 3)))
+  (message "Using Jowo GTD context"))
 
-  (setq org-refile-use-outline-path 'file
+(after! org
+  ;; Start Emacs in the personal GTD context by default.
+  (nrbrt/set-org-gtd-context-personal))
+
+(after! org
+  (setq org-refile-use-outline-path 'full-file-path
         org-outline-path-complete-in-steps nil
         org-refile-allow-creating-parent-nodes 'confirm
         org-refile-use-cache nil))
@@ -320,10 +324,10 @@
 (map! :leader
       (:prefix ("o" . "open")
        (:prefix ("a" . "agenda")
-        :desc "Use personal agenda files" "p"
-        #'nrbrt/set-org-agenda-files-personal
-        :desc "Use Jowo agenda files" "j"
-        #'nrbrt/set-org-agenda-files-jowo
+        :desc "Use personal GTD context" "p"
+        #'nrbrt/set-org-gtd-context-personal
+        :desc "Use Jowo GTD context" "j"
+        #'nrbrt/set-org-gtd-context-jowo
         :desc "Open agenda" "a"
         #'org-agenda)))
 
@@ -342,10 +346,6 @@
 ;; Ensure ox-rst is loaded when org-mode starts.
 (after! org
   (require 'ox-rst))
-
-(setq org-journal-date-prefix "#+TITLE: "
-      org-journal-time-prefix "* "
-      org-journal-file-format "%Y-%m-%d.org")
 
 (defun switch-to-personal-journal ()
   (interactive)

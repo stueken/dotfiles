@@ -554,61 +554,67 @@ Add the =CREATED= property automatically for new entries created via capture.
 For manually created tasks, the =CREATED= property can be added explicitly with a
 custom helper command later if needed. Start simple first.
 
-**** Agenda file switching
+**** GTD context switching
 
-Switch agenda scope between personal and Jowo GTD files.
+Switch the active GTD context between personal and Jowo.
 
-This matches the intended workflow: usually only one context is active at a
-time, either personal or employer-specific.
+A context controls both =org-agenda-files= and =org-refile-targets=. This keeps
+daily work focused: when the personal context is active, agenda and refile use
+personal GTD files; when the Jowo context is active, both use Jowo GTD files.
+
+Use the Jowo context before refiling from Jowo journals, and the personal
+context before refiling personal journal entries.
 
 #+begin_src emacs-lisp
-(defun nrbrt/set-org-agenda-files-personal ()
-  "Use personal GTD files for `org-agenda-files`."
+(defun nrbrt/set-org-gtd-context-personal ()
+  "Use personal GTD files for agenda and refile."
   (interactive)
   (setq org-agenda-files
-        (directory-files-recursively
-         nrbrt/org-gtd-personal-directory "\\.org$"))
-  (message "Using personal agenda files"))
-
-(defun nrbrt/set-org-agenda-files-jowo ()
-  "Use Jowo GTD files for `org-agenda-files`."
-  (interactive)
-  (setq org-agenda-files
-        (directory-files-recursively
-         nrbrt/org-gtd-jowo-directory "\\.org$"))
-  (message "Using Jowo agenda files"))
-#+end_src
-
-Use personal GTD files as the default agenda scope on startup.
-
-#+begin_src emacs-lisp
-(after! org
-  (nrbrt/set-org-agenda-files-personal))
-#+end_src
-
-**** Refile targets
-
-Define refile targets for the GTD system.
-
-Refile is used to move tasks out of journals, inboxes, and temporary notes into
-their final GTD destination files.
-
-Unlike opening files, refile does not browse directories. It completes against
-the targets listed in =org-refile-targets=. Therefore all relevant GTD files
-must be listed explicitly.
-
-#+begin_src emacs-lisp
-(after! org
+        (list nrbrt/org-gtd-personal-inbox-file
+              nrbrt/org-gtd-personal-tasks-file
+              nrbrt/org-gtd-personal-projects-file
+              nrbrt/org-gtd-personal-someday-file))
   (setq org-refile-targets
         `((,nrbrt/org-gtd-personal-tasks-file :maxlevel . 3)
           (,nrbrt/org-gtd-personal-projects-file :maxlevel . 3)
-          (,nrbrt/org-gtd-personal-someday-file :maxlevel . 3)
+          (,nrbrt/org-gtd-personal-someday-file :maxlevel . 3)))
+  (message "Using personal GTD context"))
 
-          (,nrbrt/org-gtd-jowo-tasks-file :maxlevel . 3)
+(defun nrbrt/set-org-gtd-context-jowo ()
+  "Use Jowo GTD files for agenda and refile."
+  (interactive)
+  (setq org-agenda-files
+        (list nrbrt/org-gtd-jowo-inbox-file
+              nrbrt/org-gtd-jowo-tasks-file
+              nrbrt/org-gtd-jowo-projects-file
+              nrbrt/org-gtd-jowo-someday-file))
+  (setq org-refile-targets
+        `((,nrbrt/org-gtd-jowo-tasks-file :maxlevel . 3)
           (,nrbrt/org-gtd-jowo-projects-file :maxlevel . 3)
           (,nrbrt/org-gtd-jowo-someday-file :maxlevel . 3)))
+  (message "Using Jowo GTD context"))
 
-  (setq org-refile-use-outline-path 'file
+(after! org
+  ;; Start Emacs in the personal GTD context by default.
+  (nrbrt/set-org-gtd-context-personal))
+#+end_src
+
+**** Refile settings
+
+Configure how Org displays and completes refile targets.
+
+The actual target files are set by the active GTD context. This avoids mixing
+personal and Jowo tasks during normal daily work.
+
+If an item needs to move across contexts, switch context first and then refile:
+
+- =SPC o a p=: use personal GTD context
+- =SPC o a j=: use Jowo GTD context
+- =SPC m r f=: refile current heading
+
+#+begin_src emacs-lisp
+(after! org
+  (setq org-refile-use-outline-path 'full-file-path
         org-outline-path-complete-in-steps nil
         org-refile-allow-creating-parent-nodes 'confirm
         org-refile-use-cache nil))
@@ -666,9 +672,6 @@ Use:
 #+end_src
 
 **** Custom agenda commands
-:PROPERTIES:
-:CREATED:  [2026-05-23 Sa 20:50]
-:END:
 
 Start with a small set of agenda commands.
 
@@ -699,15 +702,12 @@ views or grouping logic.
 Document the most important default and custom keybindings for the GTD workflow.
 
 ***** Useful default commands
-:PROPERTIES:
-:CREATED:  [2026-05-23 Sa 20:57]
-:END:
 
 - =SPC X=: capture
 - =SPC o a a=: open agenda
-- =SPC o a p=: switch to personal agenda files
-- =SPC o a j=: switch to Jowo agenda files
-- =SPC m r f=: refile current heading
+- =SPC o a p=: switch to personal GTD context
+- =SPC o a j=: switch to Jowo GTD context
+- =SPC m s r=: GTD refile using configured targets
 - =SPC m t=: change TODO state
 - =SPC m q=: set tags
 - =SPC m d s=: schedule
@@ -715,22 +715,21 @@ Document the most important default and custom keybindings for the GTD workflow.
 - =SPC m I=: create Org ID
 - =SPC m A=: archive subtree
 - =SPC m #=: update statistics cookies
-- =SPC s m n=: narrow to subtree
-- =SPC s m N=: widen
-
-***** Define helper keybindings for switching agenda scope quickly.
-:PROPERTIES:
-:CREATED:  [2026-05-23 Sa 20:55]
-:END:
+- =SPC m s n=: narrow to subtree
+- =SPC m s N=: widen
+- =SPC w m m=: maximize current window
+- =SPC w u=: restore previous window layout with winner-undo
+  
+***** Define helper keybindings for switching GTD context quickly.
 
 #+begin_src emacs-lisp
 (map! :leader
       (:prefix ("o" . "open")
        (:prefix ("a" . "agenda")
-        :desc "Use personal agenda files" "p"
-        #'nrbrt/set-org-agenda-files-personal
-        :desc "Use Jowo agenda files" "j"
-        #'nrbrt/set-org-agenda-files-jowo
+        :desc "Use personal GTD context" "p"
+        #'nrbrt/set-org-gtd-context-personal
+        :desc "Use Jowo GTD context" "j"
+        #'nrbrt/set-org-gtd-context-jowo
         :desc "Open agenda" "a"
         #'org-agenda)))
 #+end_src
@@ -838,7 +837,7 @@ https://github.com/msnoigrs/ox-rst
 
 Format Org-Journal entries
 
-#+begin_src emacs-lisp
++begin_src emacs-lisp
 (setq org-journal-date-prefix "#+TITLE: "
       org-journal-time-prefix "* "
       org-journal-file-format "%Y-%m-%d.org")
