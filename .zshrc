@@ -190,7 +190,7 @@ alias one="\
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
 
 # call doom directly and from anywhere
-export PATH="$HOME/doom-emacs/bin:$PATH"
+export PATH="$HOME/.config/emacs/bin:$PATH"
 
 # from mapool dev setup, check the reason behind that
 alias pip='noglob pip'
