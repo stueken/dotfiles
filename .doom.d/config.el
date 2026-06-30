@@ -321,6 +321,74 @@
             (todo "NEXT")
             (todo "WAIT"))))))
 
+(after! org
+  (require 'seq)
+
+  (defun nrbrt/org-agenda-files-with-archives ()
+    "Return current agenda files plus existing default Org archive files."
+    (let* ((files (org-agenda-files))
+           (archives (mapcar (lambda (file)
+                                (concat file "_archive"))
+                              files)))
+      (delete-dups
+       (append files (seq-filter #'file-exists-p archives)))))
+
+  (defun nrbrt/org-agenda-line-marker (line)
+    "Return the Org marker stored in agenda LINE."
+    (or (get-text-property 0 'org-marker line)
+        (get-text-property 0 'org-hd-marker line)))
+
+  (defun nrbrt/org-agenda-line-closed-time (line)
+    "Return CLOSED time of agenda LINE as float, or nil."
+    (when-let ((marker (nrbrt/org-agenda-line-marker line)))
+      (with-current-buffer (marker-buffer marker)
+        (save-excursion
+          (goto-char marker)
+          (when-let ((closed (org-entry-get nil "CLOSED")))
+            (float-time (org-time-string-to-time closed)))))))
+
+  (defun nrbrt/org-agenda-compare-closed-desc (a b)
+    "Compare agenda lines A and B by CLOSED timestamp, newest first."
+    (let ((time-a (nrbrt/org-agenda-line-closed-time a))
+          (time-b (nrbrt/org-agenda-line-closed-time b)))
+      (cond
+       ((and time-a time-b)
+        (cond
+         ((> time-a time-b) -1)
+         ((< time-a time-b) 1)
+         (t nil)))
+       (time-a -1)
+       (time-b 1)
+       (t nil))))
+
+  (defun nrbrt/org-agenda-closed-prefix ()
+    "Return CLOSED timestamp for agenda prefix."
+    (let ((closed (org-entry-get nil "CLOSED")))
+      (if closed
+          (format "%-28s" closed)
+        "")))
+
+  (defun nrbrt/org-agenda-done-last-days (days)
+    "Show DONE and KILL items closed in the last DAYS days."
+    (interactive
+     (list (read-number "Show DONE/KILL items from last N days: " 90)))
+    (let* ((days (max 1 days))
+           (matcher
+            (format
+             "+CLOSED>=\"<-%dd>\"+TODO=\"DONE\"|+CLOSED>=\"<-%dd>\"+TODO=\"KILL\""
+             days days))
+           (org-agenda-files (nrbrt/org-agenda-files-with-archives))
+           (org-agenda-skip-archived-trees nil)
+           (org-agenda-overriding-header
+            (format "DONE/KILL items from the last %d days" days))
+           (org-agenda-prefix-format
+            '((tags . " %i %(nrbrt/org-agenda-closed-prefix) %-20:c ")))
+           (org-agenda-cmp-user-defined
+            #'nrbrt/org-agenda-compare-closed-desc)
+           (org-agenda-sorting-strategy
+            '((tags user-defined-up category-keep))))
+      (org-tags-view nil matcher))))
+
 (map! :leader
       (:prefix ("o" . "open")
        (:prefix ("a" . "agenda")
@@ -329,7 +397,9 @@
         :desc "Use Jowo GTD context" "j"
         #'nrbrt/set-org-gtd-context-jowo
         :desc "Open agenda" "a"
-        #'org-agenda)))
+        #'org-agenda
+        :desc "Show done/killed items" "D"
+        #'nrbrt/org-agenda-done-last-days)))
 
 (map! :after org
       :map org-mode-map
