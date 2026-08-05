@@ -865,6 +865,27 @@ Recommended order:
 5. Keep =inbox.org= mainly for capture going forward.
 6. Use journal mainly for daily context, notes, and short-lived day planning.
    
+**** Temporary Doom popup workaround
+
+Work around a Doom popup error affecting Org's fast TODO selection.
+
+Observed on 2026-08-05 after a recent Doom upgrade:
+
+~wrong-type-argument: consp, nil~
+
+The error occurs in
+~+popup--org-fix-popup-window-shrinking-a~ when Org calls
+~split-window-vertically~ without arguments.
+
+After a future Doom upgrade, disable this block temporarily and test
+~SPC m t~. Remove the workaround when the fast TODO selection works without it.
+
+#+begin_src emacs-lisp
+(after! org
+  (advice-remove
+   #'org-fast-todo-selection
+   #'+popup--org-fix-popup-window-shrinking-a))
+#+end_src
 **** TODO Check out later
 [[https://github.com/alphapapa/org-super-agenda][org-super-agenda]] provides great grouping and customization features to make agenda mode easier to use.
 

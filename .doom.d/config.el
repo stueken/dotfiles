@@ -406,6 +406,11 @@
       :localleader
       "N" #'org-add-note)
 
+(after! org
+  (advice-remove
+   #'org-fast-todo-selection
+   #'+popup--org-fix-popup-window-shrinking-a))
+
 (after! org-clock
   (setq org-clock-persist t)
   (org-clock-persistence-insinuate))
