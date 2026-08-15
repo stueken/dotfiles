@@ -715,6 +715,16 @@ Use:
 - =SPC o a j=: Jowo GTD context
 - =SPC o a D=: show DONE/KILL items from the last N days
 
+The completed-items view automatically starts in Org Agenda Follow Mode.
+Moving through the results with ~j~ and ~k~ therefore shows the corresponding
+Org entry in another window.
+
+Useful commands inside the completed-items view:
+
+- ~j~ / ~k~: move through completed items
+- ~C-SPC~: manually show the current item in another window
+- ~M-x org-agenda-follow-mode~: toggle Follow Mode manually
+
 The command also includes existing default Org archive files such as
 =tasks.org_archive=, =projects.org_archive= and =someday.org_archive=.
 
@@ -780,6 +790,7 @@ The command also includes existing default Org archive files such as
              days days))
            (org-agenda-files (nrbrt/org-agenda-files-with-archives))
            (org-agenda-skip-archived-trees nil)
+           (org-agenda-start-with-follow-mode t)
            (org-agenda-overriding-header
             (format "DONE/KILL items from the last %d days" days))
            (org-agenda-prefix-format
@@ -802,6 +813,8 @@ Document the most important default and custom keybindings for the GTD workflow.
 - =SPC o a p=: switch to personal GTD context
 - =SPC o a j=: switch to Jowo GTD context
 - =SPC o a D=: show DONE/KILL items from the last N days
+- ~C-SPC~: show selected item in another window from an agenda view
+- ~M-x org-agenda-follow-mode~: toggle automatic agenda follow mode
 - =SPC m s r=: GTD refile using configured targets
 - =SPC m r f=: refile current subtree to selected org file
 - =SPC m t=: change TODO state

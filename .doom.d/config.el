@@ -382,6 +382,7 @@
              days days))
            (org-agenda-files (nrbrt/org-agenda-files-with-archives))
            (org-agenda-skip-archived-trees nil)
+           (org-agenda-start-with-follow-mode t)
            (org-agenda-overriding-header
             (format "DONE/KILL items from the last %d days" days))
            (org-agenda-prefix-format
