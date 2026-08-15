@@ -322,6 +322,9 @@
             (todo "WAIT"))))))
 
 (after! org
+  ;; Treat Org archive files as normal Org files.
+  (add-to-list 'auto-mode-alist '("\\.org_archive\\'" . org-mode))
+  
   (require 'seq)
 
   (defun nrbrt/org-agenda-files-with-archives ()
