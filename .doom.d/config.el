@@ -391,7 +391,129 @@
             #'nrbrt/org-agenda-compare-closed-desc)
            (org-agenda-sorting-strategy
             '((tags user-defined-up category-keep))))
-      (org-tags-view nil matcher))))
+      (org-tags-view nil matcher)
+      (nrbrt/org-agenda-enable-indirect-follow))))
+
+(after! org
+  (setq org-clock-into-drawer "LOGBOOK"))
+
+(after! org
+  (defvar nrbrt/org-agenda-review-date nil
+    "Date currently used by the Jowo daily review.")
+
+  (defun nrbrt/org-last-clocked-date-before-today (files)
+    "Return the most recent CLOCK date before today in FILES."
+    (let ((today (format-time-string "%Y-%m-%d"))
+          latest)
+      (dolist (file files latest)
+        (when (file-readable-p file)
+          (with-current-buffer (find-file-noselect file)
+            (save-restriction
+              (widen)
+              (save-excursion
+                (goto-char (point-min))
+                (while
+                    (re-search-forward
+                     (concat
+                      "^[ \t]*CLOCK: "
+                      "\\[\\([0-9]\\{4\\}-[0-9]\\{2\\}-"
+                      "[0-9]\\{2\\}\\)")
+                     nil t)
+                  (let ((date (match-string-no-properties 1)))
+                    (when
+                        (and (string< date today)
+                             (or (null latest)
+                                 (string< latest date)))
+                      (setq latest date)))))))))))
+
+  (defun nrbrt/org-agenda-skip-unless-clocked-on-review-date ()
+    "Skip an entry unless it was clocked on the current review date."
+    (unless nrbrt/org-agenda-review-date
+      (user-error "No daily review date is active"))
+    (let* ((next-heading
+            (save-excursion
+              (outline-next-heading)
+              (point)))
+           (regexp
+            (format
+             "^[ \t]*CLOCK: \\[%s "
+             (regexp-quote nrbrt/org-agenda-review-date))))
+      (unless
+          (save-excursion
+            (forward-line 1)
+            (re-search-forward regexp next-heading t))
+        next-heading)))
+
+  (defun nrbrt/org-agenda-jowo-daily-review ()
+    "Show Jowo items worked on during the last clocked day."
+    (interactive)
+    (let* ((org-agenda-files
+            (list nrbrt/org-gtd-jowo-inbox-file
+                  nrbrt/org-gtd-jowo-tasks-file
+                  nrbrt/org-gtd-jowo-projects-file
+                  nrbrt/org-gtd-jowo-someday-file))
+           (files (nrbrt/org-agenda-files-with-archives))
+           (date
+            (nrbrt/org-last-clocked-date-before-today files)))
+      (unless date
+        (user-error
+         "No previous Jowo CLOCK entries found"))
+      (let ((org-agenda-files files)
+            (nrbrt/org-agenda-review-date date)
+            (org-agenda-skip-archived-trees nil)
+            (org-agenda-skip-function
+             #'nrbrt/org-agenda-skip-unless-clocked-on-review-date)
+            (org-agenda-start-with-follow-mode t)
+            (org-agenda-overriding-header
+             (format "Jowo daily review: %s" date))
+            (org-agenda-prefix-format
+             '((tags . " %-20:c ")))
+            (org-agenda-sorting-strategy
+             '((tags category-keep))))
+        (org-tags-view nil "TODO={.}")
+        (nrbrt/org-agenda-enable-indirect-follow)))))
+
+(after! org
+  (defun nrbrt/org-agenda-preview-marker ()
+    "Return the marker of the current agenda item."
+    (or (org-get-at-bol 'org-marker)
+        (org-get-at-bol 'org-hd-marker)))
+
+  (defun nrbrt/org-agenda-fold-preview-drawers ()
+    "Fold drawers in the current indirect agenda preview."
+    (when (derived-mode-p 'org-agenda-mode)
+      (when-let* ((marker (nrbrt/org-agenda-preview-marker))
+                  (marker-buffer (marker-buffer marker))
+                  (base-buffer
+                   (or (buffer-base-buffer marker-buffer)
+                       marker-buffer)))
+        (let (preview-window)
+          (dolist (window (window-list))
+            (let ((buffer (window-buffer window)))
+              (when (eq (buffer-base-buffer buffer) base-buffer)
+                (setq preview-window window))))
+
+          (when preview-window
+            (with-selected-window preview-window
+              (save-excursion
+                (goto-char (window-point preview-window))
+                (when (ignore-errors
+                        (org-back-to-heading t)
+                        t)
+                  (org-cycle-hide-drawers 'children)))))))))
+
+  (defun nrbrt/org-agenda-enable-indirect-follow ()
+    "Use a folded indirect subtree for the current agenda preview."
+    (setq-local org-agenda-follow-indirect t)
+
+    ;; Run after Org's follow-mode handling so that the indirect preview
+    ;; already exists before its drawers are folded.
+    (add-hook 'post-command-hook
+              #'nrbrt/org-agenda-fold-preview-drawers
+              t t)
+
+    ;; Also fold the initially displayed item.
+    (nrbrt/org-agenda-fold-preview-drawers)))
 
 (map! :leader
       (:prefix ("o" . "open")
@@ -403,7 +525,9 @@
         :desc "Open agenda" "a"
         #'org-agenda
         :desc "Show done/killed items" "D"
-        #'nrbrt/org-agenda-done-last-days)))
+        #'nrbrt/org-agenda-done-last-days
+        :desc "Show Jowo daily review" "R"
+        #'nrbrt/org-agenda-jowo-daily-review)))
 
 (map! :after org
       :map org-mode-map
