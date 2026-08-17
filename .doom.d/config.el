@@ -274,7 +274,9 @@
   (setq org-refile-use-outline-path 'full-file-path
         org-outline-path-complete-in-steps nil
         org-refile-allow-creating-parent-nodes 'confirm
-        org-refile-use-cache nil))
+        org-refile-use-cache nil
+        org-reverse-note-order
+        '(("/tasks\\.org\\'" . t))))
 
 (after! org
   (setq org-default-notes-file nrbrt/org-gtd-personal-inbox-file)

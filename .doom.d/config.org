@@ -607,6 +607,10 @@ Configure how Org displays and completes refile targets.
 The actual target files are set by the active GTD context. This avoids mixing
 personal and Jowo tasks during normal daily work.
 
+Items refiled directly into a ~tasks.org~ file are inserted at the beginning
+of the file. Projects and someday items keep Org's normal ordering and are
+appended below their selected target heading.
+
 If an item needs to move across contexts, switch context first and then refile:
 
 - =SPC o a p=: use personal GTD context
@@ -618,7 +622,9 @@ If an item needs to move across contexts, switch context first and then refile:
   (setq org-refile-use-outline-path 'full-file-path
         org-outline-path-complete-in-steps nil
         org-refile-allow-creating-parent-nodes 'confirm
-        org-refile-use-cache nil))
+        org-refile-use-cache nil
+        org-reverse-note-order
+        '(("/tasks\\.org\\'" . t))))
 #+end_src
 
 Use =tasks.org= for single actionable items, =projects.org= for larger
@@ -987,6 +993,8 @@ Document the most important default and custom keybindings for the GTD workflow.
 ***** Useful default commands
 
 - =SPC X=: capture
+- ~C-c C-c~: finalize the current capture
+- ~C-c C-w~: finalize and immediately refile the current capture
 - =SPC o a a=: open agenda
 - =SPC o a p=: switch to personal GTD context
 - =SPC o a j=: switch to Jowo GTD context
