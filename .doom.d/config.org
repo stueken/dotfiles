@@ -632,6 +632,21 @@ multi-step efforts, and =someday.org= for ideas without current commitment.
 
 =inbox.org= is reserved for capture and should not become a permanent storage
 location during migration.
+**** Stable ID links
+
+Use globally unique Org IDs for links between Org headings.
+
+This keeps links stable when GTD items are refiled between inbox, tasks,
+projects, someday, or their archive files.
+
+When storing a link to an Org heading, create an ID when necessary and use
+that ID instead of a file/heading-based link.
+
+#+begin_src emacs-lisp
+(after! org
+  (require 'org-id)
+  (setq org-id-link-to-org-use-id t))
+#+end_src
 
 **** Capture templates
 
@@ -1012,7 +1027,9 @@ Document the most important default and custom keybindings for the GTD workflow.
 - =SPC m q=: set tags
 - =SPC m d s=: schedule
 - =SPC m d d=: deadline
-- =SPC m I=: create Org ID
+- ~SPC n l~: store a link to the current location, using an ID when possible
+- ~SPC m l S~: insert the last stored link
+- ~SPC m I~: create an Org ID for the current heading
 - =SPC m A=: archive subtree
 - =SPC m #=: update statistics cookies
 - =SPC m s n=: narrow to subtree

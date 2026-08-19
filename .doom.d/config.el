@@ -279,6 +279,10 @@
         '(("/tasks\\.org\\'" . t))))
 
 (after! org
+  (require 'org-id)
+  (setq org-id-link-to-org-use-id t))
+
+(after! org
   (setq org-default-notes-file nrbrt/org-gtd-personal-inbox-file)
 
   (setq org-capture-templates
