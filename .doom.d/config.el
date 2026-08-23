@@ -404,8 +404,119 @@
   (setq org-clock-into-drawer "LOGBOOK"))
 
 (after! org
-  (defvar nrbrt/org-agenda-review-date nil
-    "Date currently used by the Jowo daily review.")
+  (require 'seq)
+
+  (defvar nrbrt/org-agenda-review-start-date nil
+    "Start date currently used by the Jowo daily review.")
+
+  (defvar nrbrt/org-agenda-review-end-date nil
+    "End date currently used by the Jowo daily review.")
+
+  (defun nrbrt/org-timestamp-date (timestamp)
+    "Return YYYY-MM-DD from TIMESTAMP, or nil."
+    (when (and timestamp
+               (string-match
+                "\\([0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}\\)"
+                timestamp))
+      (match-string 1 timestamp)))
+
+  (defun nrbrt/org-date-in-range-p (date start end)
+    "Return non-nil if DATE is between START and END, inclusive."
+    (and date
+         (not (string< date start))
+         (not (string< end date))))
+
+  (defun nrbrt/org-next-heading-position ()
+    "Return the position of the next Org heading or end of buffer."
+    (save-excursion
+      (if (outline-next-heading)
+          (point)
+        (point-max))))
+
+  (defun nrbrt/org-entry-clock-dates ()
+    "Return all CLOCK dates belonging directly to the current entry."
+    (save-excursion
+      (org-back-to-heading t)
+      (let ((end (nrbrt/org-next-heading-position))
+            dates)
+        (forward-line 1)
+        (while
+            (re-search-forward
+             (concat
+              "^[ \t]*CLOCK: "
+              "\\[\\([0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}\\)")
+             end t)
+          (push (match-string-no-properties 1) dates))
+        dates)))
+
+  (defun nrbrt/org-entry-clocked-in-range-p (start end)
+    "Return non-nil if the current entry was clocked between START and END."
+    (seq-some
+     (lambda (date)
+       (nrbrt/org-date-in-range-p date start end))
+     (nrbrt/org-entry-clock-dates)))
+
+  (defun nrbrt/org-entry-closed-in-range-p (start end)
+    "Return non-nil if the current DONE/KILL entry closed in the range."
+    (let ((state (org-get-todo-state))
+          (closed
+           (nrbrt/org-timestamp-date
+            (org-entry-get nil "CLOSED"))))
+      (and (member state '("DONE" "KILL"))
+           (nrbrt/org-date-in-range-p closed start end))))
+
+  (defun nrbrt/org-entry-source-file ()
+    "Return the source file of the current entry."
+    (expand-file-name
+     (or (org-entry-get nil "ARCHIVE_FILE")
+         (buffer-file-name))))
+
+  (defun nrbrt/org-entry-created-source-p ()
+    "Return non-nil if CREATED should count for the current entry."
+    (let ((file (nrbrt/org-entry-source-file)))
+      (or (file-equal-p file nrbrt/org-gtd-jowo-inbox-file)
+          (file-equal-p file nrbrt/org-gtd-jowo-tasks-file)
+          (file-equal-p file nrbrt/org-gtd-jowo-projects-file))))
+
+  (defun nrbrt/org-entry-created-in-range-p (start end)
+    "Return non-nil if the current entry was created in the review range."
+    (let ((created
+           (nrbrt/org-timestamp-date
+            (org-entry-get nil "CREATED"))))
+      (and (nrbrt/org-entry-created-source-p)
+           (nrbrt/org-date-in-range-p created start end))))
+
+  (defun nrbrt/org-entry-review-type (start end)
+    "Return the strongest activity type for the current entry in the range."
+    (when (org-get-todo-state)
+      (cond
+       ((nrbrt/org-entry-clocked-in-range-p start end)
+        'clocked)
+       ((nrbrt/org-entry-closed-in-range-p start end)
+        'closed)
+       ((nrbrt/org-entry-created-in-range-p start end)
+        'created))))
+
+  (defun nrbrt/org-agenda-skip-unless-review-type (type)
+    "Skip the current entry unless its daily-review activity type is TYPE."
+    (unless
+        (eq (nrbrt/org-entry-review-type
+             nrbrt/org-agenda-review-start-date
+             nrbrt/org-agenda-review-end-date)
+            type)
+      (nrbrt/org-next-heading-position)))
+
+  (defun nrbrt/org-agenda-skip-unless-review-clocked ()
+    "Skip entries not clocked during the current review range."
+    (nrbrt/org-agenda-skip-unless-review-type 'clocked))
+
+  (defun nrbrt/org-agenda-skip-unless-review-closed ()
+    "Skip entries not closed without stronger activity in the review range."
+    (nrbrt/org-agenda-skip-unless-review-type 'closed))
+
+  (defun nrbrt/org-agenda-skip-unless-review-created ()
+    "Skip entries not created without stronger activity in the review range."
+    (nrbrt/org-agenda-skip-unless-review-type 'created))
 
   (defun nrbrt/org-last-clocked-date-before-today (files)
     "Return the most recent CLOCK date before today in FILES."
@@ -432,26 +543,14 @@
                                  (string< latest date)))
                       (setq latest date)))))))))))
 
-  (defun nrbrt/org-agenda-skip-unless-clocked-on-review-date ()
-    "Skip an entry unless it was clocked on the current review date."
-    (unless nrbrt/org-agenda-review-date
-      (user-error "No daily review date is active"))
-    (let* ((next-heading
-            (save-excursion
-              (outline-next-heading)
-              (point)))
-           (regexp
-            (format
-             "^[ \t]*CLOCK: \\[%s "
-             (regexp-quote nrbrt/org-agenda-review-date))))
-      (unless
-          (save-excursion
-            (forward-line 1)
-            (re-search-forward regexp next-heading t))
-        next-heading)))
+  (defun nrbrt/org-yesterday-date ()
+    "Return yesterday as YYYY-MM-DD."
+    (format-time-string
+     "%Y-%m-%d"
+     (time-subtract (current-time) (days-to-time 1))))
 
   (defun nrbrt/org-agenda-jowo-daily-review ()
-    "Show Jowo items worked on during the last clocked day."
+    "Show Jowo activity since the most recent previous clocked day."
     (interactive)
     (let* ((org-agenda-files
             (list nrbrt/org-gtd-jowo-inbox-file
@@ -459,25 +558,43 @@
                   nrbrt/org-gtd-jowo-projects-file
                   nrbrt/org-gtd-jowo-someday-file))
            (files (nrbrt/org-agenda-files-with-archives))
-           (date
-            (nrbrt/org-last-clocked-date-before-today files)))
-      (unless date
-        (user-error
-         "No previous Jowo CLOCK entries found"))
+           (start
+            (nrbrt/org-last-clocked-date-before-today files))
+           (end
+            (nrbrt/org-yesterday-date)))
+      (unless start
+        (user-error "No previous Jowo CLOCK entries found"))
+
       (let ((org-agenda-files files)
-            (nrbrt/org-agenda-review-date date)
+            (nrbrt/org-agenda-review-start-date start)
+            (nrbrt/org-agenda-review-end-date end)
             (org-agenda-skip-archived-trees nil)
-            (org-agenda-skip-function
-             #'nrbrt/org-agenda-skip-unless-clocked-on-review-date)
             (org-agenda-start-with-follow-mode t)
-            (org-agenda-overriding-header
-             (format "Jowo daily review: %s" date))
             (org-agenda-prefix-format
              '((tags . " %-20:c ")))
             (org-agenda-sorting-strategy
-             '((tags category-keep))))
-        (org-tags-view nil "TODO={.}")
-        (nrbrt/org-agenda-enable-indirect-follow)))))
+             '((tags category-keep)))
+            (org-agenda-custom-commands
+             `(("R" "Jowo daily review"
+                ((tags "TODO={.+}"
+                  ((org-agenda-overriding-header
+                    ,(format "Worked on (%s - %s)" start end))
+                  (org-agenda-skip-function
+                   #'nrbrt/org-agenda-skip-unless-review-clocked)))
+
+                 (tags "TODO={.+}"
+                  ((org-agenda-overriding-header
+                    "Completed / killed without CLOCK")
+                   (org-agenda-skip-function
+                    #'nrbrt/org-agenda-skip-unless-review-closed)))
+
+                 (tags "TODO={.+}"
+                  ((org-agenda-overriding-header
+                    "Created without CLOCK/CLOSED")
+                   (org-agenda-skip-function
+                    #'nrbrt/org-agenda-skip-unless-review-created))))))))
+                (org-agenda nil "R")
+                (nrbrt/org-agenda-enable-indirect-follow)))))
 
 (after! org
   (defun nrbrt/org-agenda-preview-marker ()
