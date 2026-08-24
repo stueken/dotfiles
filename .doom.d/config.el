@@ -312,16 +312,18 @@
 
 (after! org
   (setq org-agenda-custom-commands
-        '(("n" "Next tasks"
+        '(("x" . "Custom GTD views")
+
+          ("xN" "Next tasks"
            todo "NEXT")
 
-          ("s" "Started tasks"
+          ("xS" "Started tasks"
            todo "STRT")
 
-          ("w" "Waiting tasks"
+          ("xW" "Waiting tasks"
            todo "WAIT")
 
-          ("d" "Dashboard"
+          ("xD" "Dashboard"
            ((agenda "")
             (todo "STRT")
             (todo "NEXT")

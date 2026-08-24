@@ -695,24 +695,31 @@ Use:
 
 **** Custom agenda commands
 
-Start with a small set of agenda commands.
+Keep custom agenda views behind a dedicated prefix so that standard Org Agenda
+commands remain available.
 
-The goal is to keep the workflow easy to understand before adding more advanced
-views or grouping logic.
+Use ~x~ for custom GTD views:
+
+- ~xN~: NEXT tasks
+- ~xS~: STRT tasks
+- ~xW~: WAIT tasks
+- ~xD~: GTD dashboard
 
 #+begin_src emacs-lisp
 (after! org
   (setq org-agenda-custom-commands
-        '(("n" "Next tasks"
+        '(("x" . "Custom GTD views")
+
+          ("xN" "Next tasks"
            todo "NEXT")
 
-          ("s" "Started tasks"
+          ("xS" "Started tasks"
            todo "STRT")
 
-          ("w" "Waiting tasks"
+          ("xW" "Waiting tasks"
            todo "WAIT")
 
-          ("d" "Dashboard"
+          ("xD" "Dashboard"
            ((agenda "")
             (todo "STRT")
             (todo "NEXT")
@@ -1131,11 +1138,17 @@ Document the most important default and custom keybindings for the GTD workflow.
 - =SPC X=: capture
 - ~C-c C-c~: finalize the current capture
 - ~C-c C-w~: finalize and immediately refile the current capture
-- =SPC o a a=: open agenda
-- =SPC o a p=: switch to personal GTD context
-- =SPC o a j=: switch to Jowo GTD context
-- =SPC o a D=: show DONE/KILL items from the last N days
+- ~SPC o a a~: open Org Agenda dispatcher
+- ~SPC o a p~: switch to personal GTD context
+- ~SPC o a j~: switch to Jowo GTD context
+- ~SPC o a D~: show DONE/KILL items from the last N days
 - ~SPC o a R~: show Jowo activity since the last clocked workday
+- ~s~ in agenda dispatcher: search all agenda files in the current context
+- ~S~ in agenda dispatcher: search TODO entries in the current context
+- ~xN~ in agenda dispatcher: show NEXT tasks
+- ~xS~ in agenda dispatcher: show STRT tasks
+- ~xW~ in agenda dispatcher: show WAIT tasks
+- ~xD~ in agenda dispatcher: show GTD dashboard
 - ~C-SPC~: show selected item in another window from an agenda view
 - ~M-x org-agenda-follow-mode~: toggle automatic agenda follow mode
 - ~SPC m c i~: clock in to the current item
