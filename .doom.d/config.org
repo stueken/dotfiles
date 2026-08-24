@@ -559,47 +559,64 @@ custom helper command later if needed. Start simple first.
 
 Switch the active GTD context between personal and Jowo.
 
-A context controls both =org-agenda-files= and =org-refile-targets=. This keeps
-daily work focused: when the personal context is active, agenda and refile use
-personal GTD files; when the Jowo context is active, both use Jowo GTD files.
+A context controls ~org-agenda-files~, ~org-refile-targets~, and the archive
+files included in Org text searches.
 
-Use the Jowo context before refiling from Jowo journals, and the personal
-context before refiling personal journal entries.
+Archive files are included in text searches but not in normal agenda views.
 
 #+begin_src emacs-lisp
+(defun nrbrt/org-existing-archive-files (files)
+  "Return existing default Org archive files belonging to FILES."
+  (delq nil
+        (mapcar
+         (lambda (file)
+           (let ((archive (concat file "_archive")))
+             (when (file-exists-p archive)
+               archive)))
+         files)))
+
 (defun nrbrt/set-org-gtd-context-personal ()
-  "Use personal GTD files for agenda and refile."
+  "Use personal GTD files for agenda, search, and refile."
   (interactive)
   (setq org-agenda-files
         (list nrbrt/org-gtd-personal-inbox-file
               nrbrt/org-gtd-personal-tasks-file
               nrbrt/org-gtd-personal-projects-file
               nrbrt/org-gtd-personal-someday-file))
+
+  (setq org-agenda-text-search-extra-files
+        (nrbrt/org-existing-archive-files org-agenda-files))
+
   (setq org-refile-targets
         `((,nrbrt/org-gtd-personal-tasks-file :maxlevel . 3)
           (,nrbrt/org-gtd-personal-projects-file :maxlevel . 3)
           (,nrbrt/org-gtd-personal-someday-file :maxlevel . 3)))
+
   (message "Using personal GTD context"))
 
 (defun nrbrt/set-org-gtd-context-jowo ()
-  "Use Jowo GTD files for agenda and refile."
+  "Use Jowo GTD files for agenda, search, and refile."
   (interactive)
   (setq org-agenda-files
         (list nrbrt/org-gtd-jowo-inbox-file
               nrbrt/org-gtd-jowo-tasks-file
               nrbrt/org-gtd-jowo-projects-file
               nrbrt/org-gtd-jowo-someday-file))
+
+  (setq org-agenda-text-search-extra-files
+        (nrbrt/org-existing-archive-files org-agenda-files))
+
   (setq org-refile-targets
         `((,nrbrt/org-gtd-jowo-tasks-file :maxlevel . 3)
           (,nrbrt/org-gtd-jowo-projects-file :maxlevel . 3)
           (,nrbrt/org-gtd-jowo-someday-file :maxlevel . 3)))
+
   (message "Using Jowo GTD context"))
 
 (after! org
   ;; Start Emacs in the personal GTD context by default.
   (nrbrt/set-org-gtd-context-personal))
 #+end_src
-
 **** Refile settings
 
 Configure how Org displays and completes refile targets.
@@ -1143,7 +1160,7 @@ Document the most important default and custom keybindings for the GTD workflow.
 - ~SPC o a j~: switch to Jowo GTD context
 - ~SPC o a D~: show DONE/KILL items from the last N days
 - ~SPC o a R~: show Jowo activity since the last clocked workday
-- ~s~ in agenda dispatcher: search all agenda files in the current context
+- ~s~ in agenda dispatcher: search active GTD files and archives in the current context
 - ~S~ in agenda dispatcher: search TODO entries in the current context
 - ~xN~ in agenda dispatcher: show NEXT tasks
 - ~xS~ in agenda dispatcher: show STRT tasks

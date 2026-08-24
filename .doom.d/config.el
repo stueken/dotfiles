@@ -238,32 +238,52 @@
 (add-hook 'org-capture-after-finalize-hook
           #'nrbrt/org-capture-set-created-property)
 
+(defun nrbrt/org-existing-archive-files (files)
+  "Return existing default Org archive files belonging to FILES."
+  (delq nil
+        (mapcar
+         (lambda (file)
+           (let ((archive (concat file "_archive")))
+             (when (file-exists-p archive)
+               archive)))
+         files)))
+
 (defun nrbrt/set-org-gtd-context-personal ()
-  "Use personal GTD files for agenda and refile."
+  "Use personal GTD files for agenda, search, and refile."
   (interactive)
   (setq org-agenda-files
         (list nrbrt/org-gtd-personal-inbox-file
               nrbrt/org-gtd-personal-tasks-file
               nrbrt/org-gtd-personal-projects-file
               nrbrt/org-gtd-personal-someday-file))
+
+  (setq org-agenda-text-search-extra-files
+        (nrbrt/org-existing-archive-files org-agenda-files))
+
   (setq org-refile-targets
         `((,nrbrt/org-gtd-personal-tasks-file :maxlevel . 3)
           (,nrbrt/org-gtd-personal-projects-file :maxlevel . 3)
           (,nrbrt/org-gtd-personal-someday-file :maxlevel . 3)))
+
   (message "Using personal GTD context"))
 
 (defun nrbrt/set-org-gtd-context-jowo ()
-  "Use Jowo GTD files for agenda and refile."
+  "Use Jowo GTD files for agenda, search, and refile."
   (interactive)
   (setq org-agenda-files
         (list nrbrt/org-gtd-jowo-inbox-file
               nrbrt/org-gtd-jowo-tasks-file
               nrbrt/org-gtd-jowo-projects-file
               nrbrt/org-gtd-jowo-someday-file))
+
+  (setq org-agenda-text-search-extra-files
+        (nrbrt/org-existing-archive-files org-agenda-files))
+
   (setq org-refile-targets
         `((,nrbrt/org-gtd-jowo-tasks-file :maxlevel . 3)
           (,nrbrt/org-gtd-jowo-projects-file :maxlevel . 3)
           (,nrbrt/org-gtd-jowo-someday-file :maxlevel . 3)))
+
   (message "Using Jowo GTD context"))
 
 (after! org
