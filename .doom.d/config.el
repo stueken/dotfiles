@@ -184,6 +184,14 @@
   (expand-file-name "jowo/" nrbrt/org-gtd-directory)
   "Directory for Jowo GTD files.")
 
+(defvar nrbrt/org-notes-personal-directory
+  (expand-file-name "notes/personal/" org-directory)
+  "Directory for personal Org notes.")
+
+(defvar nrbrt/org-notes-jowo-directory
+  (expand-file-name "notes/jowo/" org-directory)
+  "Directory for Jowo Org notes.")
+
 (defvar nrbrt/org-gtd-personal-inbox-file
   (expand-file-name "inbox.org" nrbrt/org-gtd-personal-directory)
   "Personal GTD inbox file.")
@@ -238,6 +246,12 @@
 (add-hook 'org-capture-after-finalize-hook
           #'nrbrt/org-capture-set-created-property)
 
+(defvar nrbrt/org-gtd-context nil
+  "Currently active GTD context.")
+
+(defvar nrbrt/org-auto-context-last-buffer nil
+  "Last buffer considered for automatic GTD context switching.")
+
 (defun nrbrt/org-existing-archive-files (files)
   "Return existing default Org archive files belonging to FILES."
   (delq nil
@@ -248,9 +262,10 @@
                archive)))
          files)))
 
-(defun nrbrt/set-org-gtd-context-personal ()
+(defun nrbrt/set-org-gtd-context-personal (&optional quiet)
   "Use personal GTD files for agenda, search, and refile."
   (interactive)
+
   (setq org-agenda-files
         (list nrbrt/org-gtd-personal-inbox-file
               nrbrt/org-gtd-personal-tasks-file
@@ -265,11 +280,15 @@
           (,nrbrt/org-gtd-personal-projects-file :maxlevel . 3)
           (,nrbrt/org-gtd-personal-someday-file :maxlevel . 3)))
 
-  (message "Using personal GTD context"))
+  (setq nrbrt/org-gtd-context 'personal)
 
-(defun nrbrt/set-org-gtd-context-jowo ()
+  (unless quiet
+    (message "Using personal GTD context")))
+
+(defun nrbrt/set-org-gtd-context-jowo (&optional quiet)
   "Use Jowo GTD files for agenda, search, and refile."
   (interactive)
+
   (setq org-agenda-files
         (list nrbrt/org-gtd-jowo-inbox-file
               nrbrt/org-gtd-jowo-tasks-file
@@ -284,11 +303,61 @@
           (,nrbrt/org-gtd-jowo-projects-file :maxlevel . 3)
           (,nrbrt/org-gtd-jowo-someday-file :maxlevel . 3)))
 
-  (message "Using Jowo GTD context"))
+  (setq nrbrt/org-gtd-context 'jowo)
+
+  (unless quiet
+    (message "Using Jowo GTD context")))
+
+(defun nrbrt/org-file-in-directory-p (file directory)
+  "Return non-nil if FILE is located inside DIRECTORY."
+  (and file
+       directory
+       (file-in-directory-p
+        (expand-file-name file)
+        (expand-file-name directory))))
+
+(defun nrbrt/org-context-for-file (file)
+  "Return the GTD context associated with FILE."
+  (cond
+   ((or
+     (nrbrt/org-file-in-directory-p
+      file nrbrt/org-gtd-personal-directory)
+     (nrbrt/org-file-in-directory-p
+      file nrbrt/org-notes-personal-directory))
+    'personal)
+
+   ((or
+     (nrbrt/org-file-in-directory-p
+      file nrbrt/org-gtd-jowo-directory)
+     (nrbrt/org-file-in-directory-p
+      file nrbrt/org-notes-jowo-directory))
+    'jowo)))
+
+(defun nrbrt/org-auto-switch-gtd-context ()
+  "Automatically select the GTD context for the current file buffer."
+  (let ((buffer (window-buffer (selected-window))))
+    (unless (eq buffer nrbrt/org-auto-context-last-buffer)
+      (setq nrbrt/org-auto-context-last-buffer buffer)
+
+      (let ((file
+             (with-current-buffer buffer
+               buffer-file-name)))
+        (pcase (nrbrt/org-context-for-file file)
+          ('personal
+           (unless (eq nrbrt/org-gtd-context 'personal)
+             (nrbrt/set-org-gtd-context-personal t)))
+
+          ('jowo
+           (unless (eq nrbrt/org-gtd-context 'jowo)
+             (nrbrt/set-org-gtd-context-jowo t))))))))
 
 (after! org
   ;; Start Emacs in the personal GTD context by default.
-  (nrbrt/set-org-gtd-context-personal))
+  (nrbrt/set-org-gtd-context-personal)
+
+  ;; Automatically switch context when changing file buffers.
+  (add-hook 'buffer-list-update-hook
+            #'nrbrt/org-auto-switch-gtd-context))
 
 (after! org
   (setq org-refile-use-outline-path 'full-file-path
