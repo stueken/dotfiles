@@ -54,11 +54,6 @@
 ;; Add ability to export to reStructuredText
 (package! ox-rst)
 
-;; TODO Remove if fixed
-;; Temporary fix as files with links are not scanned by org-roam-db-sync
-;; https://github.com/org-roam/org-roam/issues/2361#issuecomment-1650957932
-(package! org :pin "ca873f7")
-
 ;; Make invisible parts of Org elements appear visible
 ;; https://github.com/awth13/org-appear
 (package! org-appear

@@ -822,9 +822,6 @@ Use ~x~ for custom GTD views:
 #+end_src
 
 **** Completed items review
-:PROPERTIES:
-:CREATED:  [2026-06-22 Mo 19:42]
-:END:
 
 Show completed or killed items from the current GTD context.
 
