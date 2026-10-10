@@ -232,7 +232,7 @@ Keep Org-roam notes separate to other directories:
 
 Ensure Org-roam is available on start
 #+begin_src emacs-lisp
-(org-roam-db-autosync-mode)
+(org-roam-db-autosync-mode +1)
 #+end_src
 
 Ensure org-capture settings do not add a #+title line

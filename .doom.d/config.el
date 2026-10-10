@@ -46,7 +46,7 @@
 
 (setq org-roam-directory (concat org-directory "notes/"))
 
-(org-roam-db-autosync-mode)
+(org-roam-db-autosync-mode +1)
 
 (setq org-capture-templates nil)
 
