@@ -214,7 +214,7 @@ Add Mermaid.js Org mode integration: [[https://github.com/arnm/ob-mermaid][ob-me
 (setq ob-mermaid-cli-path "/usr/local/bin/mmdc")
 #+end_src
 
-#+begin_src
+#+begin_src emacs-lisp
 (org-babel-do-load-languages
     'org-babel-load-languages
     '((mermaid . t)
@@ -288,7 +288,7 @@ Creating the property "type" on my nodes
       (file-name-nondirectory
        (directory-file-name
         (file-name-directory
-	 (file-relative-name (org-roam-node-file node) org-roam-directory))))
+         (file-relative-name (org-roam-node-file node) org-roam-directory))))
       (error "")))
 #+end_src
 

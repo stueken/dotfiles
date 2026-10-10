@@ -89,7 +89,7 @@
     (file-name-nondirectory
      (directory-file-name
       (file-name-directory
-	 (file-relative-name (org-roam-node-file node) org-roam-directory))))
+       (file-relative-name (org-roam-node-file node) org-roam-directory))))
     (error "")))
 
 (setq org-roam-node-display-template
