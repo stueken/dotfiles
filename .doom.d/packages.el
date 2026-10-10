@@ -59,8 +59,6 @@
 (package! org-appear
   :recipe (:host github
            :repo "awth13/org-appear"))
-;;
-;; HACK Use latest version of org-roam used by org-roam-ui
-;; see https://github.com/org-roam/org-roam-ui#doom
-(unpin! org-roam)
+
+;; Interactive graph frontend for Org-roam.
 (package! org-roam-ui)
