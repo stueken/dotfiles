@@ -126,7 +126,7 @@ Likes:
 *** Deft
 #+begin_src emacs-lisp
 (setq deft-directory "~/Documents"
-      deft-extensions '("org", "txt")
+      deft-extensions '("org" "txt")
       deft-recursive t)
 #+end_src
 

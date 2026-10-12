@@ -13,7 +13,7 @@
 (setq doom-theme 'wombat)
 
 (setq deft-directory "~/Documents"
-      deft-extensions '("org", "txt")
+      deft-extensions '("org" "txt")
       deft-recursive t)
 
 (setq projectile-project-search-path '("~/Nextcloud/coding/"))
