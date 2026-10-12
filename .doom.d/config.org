@@ -57,6 +57,16 @@ Define custom keybinds with prefixes for the leader menu
 #+end_src
 
 * Doom Emacs
+** Lexical binding
+
+The first line of the generated config.el must be the lexical-binding cookie.
+Doom's literate tangling does not add it, so it is written here explicitly as
+the first tangled block. Without it, the file is loaded with dynamic binding.
+
+#+begin_src emacs-lisp
+;;; config.el -*- lexical-binding: t; -*-
+#+end_src
+
 ** General configuration
 
 My user information:
@@ -975,14 +985,16 @@ Use:
 - ~M-x org-agenda-follow-mode~: toggle Follow Mode manually
 
 #+begin_src emacs-lisp
+;; Declared at top level so that `let' bindings of these variables stay
+;; dynamic in byte-compiled code, as they are used by the review functions.
+(defvar nrbrt/org-agenda-review-start-date nil
+  "Start date currently used by the Jowo daily review.")
+
+(defvar nrbrt/org-agenda-review-end-date nil
+  "End date currently used by the Jowo daily review.")
+
 (after! org
   (require 'seq)
-
-  (defvar nrbrt/org-agenda-review-start-date nil
-    "Start date currently used by the Jowo daily review.")
-
-  (defvar nrbrt/org-agenda-review-end-date nil
-    "End date currently used by the Jowo daily review.")
 
   (defun nrbrt/org-timestamp-date (timestamp)
     "Return YYYY-MM-DD from TIMESTAMP, or nil."

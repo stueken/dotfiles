@@ -1,3 +1,5 @@
+;;; config.el -*- lexical-binding: t; -*-
+
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
 (setq user-full-name "Norbert Stüken"
@@ -500,14 +502,16 @@
 (after! org
   (setq org-clock-into-drawer "LOGBOOK"))
 
+;; Declared at top level so that `let' bindings of these variables stay
+;; dynamic in byte-compiled code, as they are used by the review functions.
+(defvar nrbrt/org-agenda-review-start-date nil
+  "Start date currently used by the Jowo daily review.")
+
+(defvar nrbrt/org-agenda-review-end-date nil
+  "End date currently used by the Jowo daily review.")
+
 (after! org
   (require 'seq)
-
-  (defvar nrbrt/org-agenda-review-start-date nil
-    "Start date currently used by the Jowo daily review.")
-
-  (defvar nrbrt/org-agenda-review-end-date nil
-    "End date currently used by the Jowo daily review.")
 
   (defun nrbrt/org-timestamp-date (timestamp)
     "Return YYYY-MM-DD from TIMESTAMP, or nil."
