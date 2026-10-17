@@ -245,11 +245,6 @@ Ensure Org-roam is available on start
 (org-roam-db-autosync-mode +1)
 #+end_src
 
-Ensure org-capture settings do not add a #+title line
-#+begin_src  emacs-lisp
-(setq org-capture-templates nil)
-#+end_src
-
 Change the file name format by modifying the ~org-roam-capture-templates~ variable.
 #+begin_src emacs-lisp
 (setq org-roam-capture-templates
