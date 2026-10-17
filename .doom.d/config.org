@@ -556,19 +556,9 @@ Add a helper function to create a =CREATED= property on the current heading.
                          (org-time-stamp-format t t))))))
 #+end_src
 
-Add the =CREATED= property automatically for new entries created via capture.
-
-#+begin_src emacs-lisp
-(defun nrbrt/org-capture-set-created-property ()
-  "Set CREATED property on a newly captured Org entry."
-  (when (derived-mode-p 'org-mode)
-    (save-excursion
-      (org-back-to-heading t)
-      (nrbrt/org-set-created-property))))
-
-(add-hook 'org-capture-after-finalize-hook
-          #'nrbrt/org-capture-set-created-property)
-#+end_src
+The =CREATED= property of captured entries is set by the =%U= line in the capture
+templates. No after-finalize hook is used for this: it would run in the buffer where
+the capture was started and could add =CREATED= to an unrelated heading there.
 
 For manually created tasks, the =CREATED= property can be added explicitly with a
 custom helper command later if needed. Start simple first.

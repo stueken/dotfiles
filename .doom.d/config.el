@@ -244,16 +244,6 @@
                         (format-time-string
                          (org-time-stamp-format t t))))))
 
-(defun nrbrt/org-capture-set-created-property ()
-  "Set CREATED property on a newly captured Org entry."
-  (when (derived-mode-p 'org-mode)
-    (save-excursion
-      (org-back-to-heading t)
-      (nrbrt/org-set-created-property))))
-
-(add-hook 'org-capture-after-finalize-hook
-          #'nrbrt/org-capture-set-created-property)
-
 (defvar nrbrt/org-gtd-context nil
   "Currently active GTD context.")
 
