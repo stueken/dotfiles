@@ -51,9 +51,8 @@ Define custom keybinds with prefixes for the leader menu
 
 #+begin_src emacs-lisp :tangle no
 (map! :leader
-      (:prefix ("e" . "exports"
-       :desc "Export Org to HTML"
-       "h" #'org-html-export-to-html))
+      (:prefix ("e" . "exports")
+       :desc "Export Org to HTML" "h" #'org-html-export-to-html))
 #+end_src
 
 * Doom Emacs
@@ -279,7 +278,7 @@ Configure attachments to be stored together with their Org document.
 
 TODO: this makes problems
 #+begin_src emacs-lisp :tangle no
-(setq org-attach-id-dir "attachments/"
+(setq org-attach-id-dir "attachments/")
 #+end_src
 
 
