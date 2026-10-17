@@ -51,7 +51,9 @@
 ## Execution and access
 
 - Read-only configuration inspection is the starting point.
-- Run doom sync, package updates, doom up, and recovery actions only when requested.
+- Running doom sync (without -u) is allowed when a configuration change requires
+  regeneration. Package updates, doom up, doom sync -u and recovery actions still
+  require an explicit request.
 - Review actual command scope; historical doom sync -u usage is not a default instruction.
 - Preserve existing workarounds until a specific removal is justified and tested.
 - Do not read actual Org notes, journals, or credentials outside this project without
