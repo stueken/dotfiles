@@ -254,6 +254,54 @@ user interface (TUI) in any directory. Keeping this block is optional.
   :commands (agent-shell-opencode-start-agent))
 #+end_src
 
+** LLM assistance (gptel)
+
+[[https://github.com/karthink/gptel][gptel]] is the text assistant for Org and Roam notes. It is not used for changing this
+configuration; that is done with OpenCode.
+
+Two backends are registered: GitHub Copilot Business for work (jowo) files and the
+IONOS endpoint for personal files. Notes and GTD files are assigned by the context
+function from the GTD section. Other files keep the default backend, and the backend
+can still be chosen in the gptel menu. The IONOS key is read from =auth-source= (the
+encrypted =~/.authinfo.gpg=), never from this file.
+
+#+begin_src emacs-lisp
+;; Copilot models that are missing from gptel's built-in list. Add new model IDs here.
+(defvar nrbrt/gptel-copilot-extra-models '(claude-haiku-5.5)
+  "Extra GitHub Copilot model IDs added to gptel's built-in list.")
+
+(after! gptel
+  (require 'gptel-gh nil t)
+  (setq nrbrt/gptel-copilot-backend
+        (gptel-make-gh-copilot "Copilot"
+          :host "api.business.githubcopilot.com"
+          :models (append gptel--gh-models nrbrt/gptel-copilot-extra-models)))
+
+  (setq nrbrt/gptel-ionos-backend
+        (gptel-make-openai "IONOS"
+          :host "openai.inference.de-txl.ionos.com"
+          :protocol "https"
+          :endpoint "/v1/chat/completions"
+          :stream t
+          :key #'gptel-api-key-from-auth-source
+          :models '("Qwen/Qwen3-Coder-Next")))
+
+  (setq gptel-backend nrbrt/gptel-copilot-backend))
+
+(defun nrbrt/gptel-set-backend-for-context ()
+  "Use the gptel backend that matches the GTD context of the current Org file."
+  (require 'gptel nil t)
+  (when-let* ((file buffer-file-name)
+              (context (nrbrt/org-context-for-file file)))
+    (setq-local gptel-backend
+                (pcase context
+                  ('personal nrbrt/gptel-ionos-backend)
+                  ('jowo nrbrt/gptel-copilot-backend)))))
+
+(after! org
+  (add-hook 'org-mode-hook #'nrbrt/gptel-set-backend-for-context))
+#+end_src
+
 ** Capturing and note taking
 *** TODO Org-Roam
 

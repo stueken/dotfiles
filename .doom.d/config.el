@@ -59,6 +59,41 @@
         (lambda () (expand-file-name "~/.doom.d/")))
   :commands (agent-shell-opencode-start-agent))
 
+;; Copilot models that are missing from gptel's built-in list. Add new model IDs here.
+(defvar nrbrt/gptel-copilot-extra-models '(claude-haiku-5.5)
+  "Extra GitHub Copilot model IDs added to gptel's built-in list.")
+
+(after! gptel
+  (require 'gptel-gh nil t)
+  (setq nrbrt/gptel-copilot-backend
+        (gptel-make-gh-copilot "Copilot"
+          :host "api.business.githubcopilot.com"
+          :models (append gptel--gh-models nrbrt/gptel-copilot-extra-models)))
+
+  (setq nrbrt/gptel-ionos-backend
+        (gptel-make-openai "IONOS"
+          :host "openai.inference.de-txl.ionos.com"
+          :protocol "https"
+          :endpoint "/v1/chat/completions"
+          :stream t
+          :key #'gptel-api-key-from-auth-source
+          :models '("Qwen/Qwen3-Coder-Next")))
+
+  (setq gptel-backend nrbrt/gptel-copilot-backend))
+
+(defun nrbrt/gptel-set-backend-for-context ()
+  "Use the gptel backend that matches the GTD context of the current Org file."
+  (require 'gptel nil t)
+  (when-let* ((file buffer-file-name)
+              (context (nrbrt/org-context-for-file file)))
+    (setq-local gptel-backend
+                (pcase context
+                  ('personal nrbrt/gptel-ionos-backend)
+                  ('jowo nrbrt/gptel-copilot-backend)))))
+
+(after! org
+  (add-hook 'org-mode-hook #'nrbrt/gptel-set-backend-for-context))
+
 (setq org-roam-directory (concat org-directory "notes/"))
 
 (org-roam-db-autosync-mode +1)
