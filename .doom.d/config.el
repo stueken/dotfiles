@@ -52,6 +52,13 @@
       (plantuml . t)
       (scheme . t)))
 
+(use-package! agent-shell
+  :defer t
+  :init
+  (setq agent-shell-cwd-function
+        (lambda () (expand-file-name "~/.doom.d/")))
+  :commands (agent-shell-opencode-start-agent))
+
 (setq org-roam-directory (concat org-directory "notes/"))
 
 (org-roam-db-autosync-mode +1)

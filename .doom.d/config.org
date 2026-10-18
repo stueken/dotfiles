@@ -231,6 +231,29 @@ Add Mermaid.js Org mode integration: [[https://github.com/arnm/ob-mermaid][ob-me
       (scheme . t)))
 #+end_src
 
+** Agent shell
+
+[[https://github.com/xenodium/agent-shell][agent-shell]] runs ACP agents inside Emacs. Here it starts OpenCode (~opencode acp~),
+which uses the login made with ~opencode auth login~ (no API key in this config).
+
+Start it with ~M-x agent-shell-opencode-start-agent~.
+
+The working directory of a new session is set to the Doom config directory, so
+sessions do not start in the home directory.
+
+agent-shell is only an alternative graphical front end for OpenCode. The same
+OpenCode agent, configuration and sessions can be used from the OpenCode terminal
+user interface (TUI) in any directory. Keeping this block is optional.
+
+#+begin_src emacs-lisp
+(use-package! agent-shell
+  :defer t
+  :init
+  (setq agent-shell-cwd-function
+        (lambda () (expand-file-name "~/.doom.d/")))
+  :commands (agent-shell-opencode-start-agent))
+#+end_src
+
 ** Capturing and note taking
 *** TODO Org-Roam
 

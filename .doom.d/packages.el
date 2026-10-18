@@ -62,3 +62,9 @@
 
 ;; Interactive graph frontend for Org-roam.
 (package! org-roam-ui)
+
+;; Agent shell for ACP agents, here OpenCode.
+;; https://github.com/xenodium/agent-shell
+(package! shell-maker)
+(package! acp)
+(package! agent-shell)
