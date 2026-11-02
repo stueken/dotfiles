@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "{file:./docs/opencode-model.txt}",
+  "model": "{file:./docs/values/model-default.txt}",
   "default_agent": "plan",
   "instructions": ["docs/context.md", "docs/current-work.md"]
 }
