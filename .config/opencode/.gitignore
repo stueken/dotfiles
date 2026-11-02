@@ -1,0 +1,4 @@
+# Private OpenCode data; never commit. Values are synchronized separately.
+/docs/
+*.env
+service.json
