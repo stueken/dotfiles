@@ -28,7 +28,7 @@ from upstream. Confirm with `doom upgrade --help` if in doubt (read-only).
 Modules and packages are both installed by `doom sync`. Modules are Doom's own
 bundles: config code plus a `packages.el` from the modules repository, activated in
 init.el (with optional flags). Packages are Emacs Lisp libraries fetched by straight.
-The user's `~/.doom.d/packages.el` declares extra packages. Keep this distinction in
+The user's `packages.el` in the Doom directory declares extra packages. Keep this distinction in
 the report.
 
 Two verdict groups:
@@ -70,7 +70,7 @@ Two verdict groups:
    as an evidence gap.
 3. **Model and mode.** Report the mode you see (Plan is required) and the model.
    Check the model against the current GitHub Copilot list (the `opencode.models` tool,
-   called inside the `execute` tool, with provider `github-copilot`). Use the default
+   called inside the `execute` tool, with the configured provider). Use the default
    variant of a Sonnet-class model from the list, and name the choice in the report.
    If no suitable model is listed, name the available alternative and ask before
    proceeding. If the mode is not Plan, tell the

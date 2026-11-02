@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "github-copilot/claude-haiku-5.5",
+  "model": "{file:./docs/opencode-model.txt}",
   "default_agent": "plan",
   "instructions": ["docs/context.md", "docs/current-work.md"]
 }
