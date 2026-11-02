@@ -794,8 +794,57 @@
    #'+popup--org-fix-popup-window-shrinking-a))
 
 (after! org-clock
-  (setq org-clock-persist t)
+  (setq org-clock-persist 'history
+        ;; Keep very short clocks: the daily review relies on CLOCK entries.
+        org-clock-out-remove-zero-time-clocks nil)
   (org-clock-persistence-insinuate))
+
+(defun nrbrt/org-clock-files ()
+  "Return the GTD files and their archives, without sync conflict copies."
+  (seq-filter
+   #'file-exists-p
+   (mapcan (lambda (file) (list file (concat file "_archive")))
+           (list nrbrt/org-gtd-personal-inbox-file
+                 nrbrt/org-gtd-personal-tasks-file
+                 nrbrt/org-gtd-personal-projects-file
+                 nrbrt/org-gtd-personal-someday-file
+                 nrbrt/org-gtd-jowo-inbox-file
+                 nrbrt/org-gtd-jowo-tasks-file
+                 nrbrt/org-gtd-jowo-projects-file
+                 nrbrt/org-gtd-jowo-someday-file))))
+
+(defun nrbrt/org-clock-out-running ()
+  "Clock out the running clock and save the buffer that contains it."
+  (require 'org-clock)
+  (when (org-clocking-p)
+    (let ((buffer (marker-buffer org-clock-marker)))
+      (org-clock-out nil t)
+      (when (buffer-live-p buffer)
+        (with-current-buffer buffer
+          (save-buffer))))))
+
+(defun nrbrt/org-clock-close-stale ()
+  "Close open clocks that started on an earlier day at 23:59 of that day."
+  (require 'org-clock)
+  (let ((today (format-time-string "%Y-%m-%d")))
+    (dolist (file (nrbrt/org-clock-files))
+      (let ((changed nil))
+        (dolist (clock (org-find-open-clocks file))
+          (let* ((start (cdr clock))
+                 (decoded (decode-time start)))
+            (when (string< (format-time-string "%Y-%m-%d" start) today)
+              (org-clock-clock-out
+               clock t
+               (encode-time 0 59 23
+                            (nth 3 decoded) (nth 4 decoded) (nth 5 decoded)))
+              (setq changed t))))
+        (when changed
+          (with-current-buffer (find-file-noselect file)
+            (save-buffer)))))))
+
+(add-hook 'kill-emacs-hook #'nrbrt/org-clock-out-running -90)
+(add-hook 'emacs-startup-hook #'nrbrt/org-clock-close-stale)
+(run-at-time "23:59" 86400 #'nrbrt/org-clock-out-running)
 
 (use-package! ox-jira
   :after org)
