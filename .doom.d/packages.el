@@ -51,6 +51,7 @@
 (package! ob-mermaid)
 ;; (package! org-super-agenda)
 (package! ox-jira)
+(package! jira)
 ;; Add ability to export to reStructuredText
 (package! ox-rst)
 

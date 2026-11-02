@@ -850,7 +850,141 @@ Use:
            entry
            (file ,nrbrt/org-gtd-jowo-inbox-file)
            "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n%i\n%a"
+           :empty-lines 1)
+
+          ("k" "Jowo inbox with Jira issue"
+           entry
+           (file ,nrbrt/org-gtd-jowo-inbox-file)
+           "* TODO %(nrbrt/jira-issue-org-link)%?\n:PROPERTIES:\n:CREATED: %U\n:END:\n%i"
+           :empty-lines 1)
+
+          ("K" "Jowo inbox with Jira issue and context"
+           entry
+           (file ,nrbrt/org-gtd-jowo-inbox-file)
+           "* TODO %(nrbrt/jira-issue-org-link)%?\n:PROPERTIES:\n:CREATED: %U\n\
+:END:\n%i\n%a"
            :empty-lines 1))))
+#+end_src
+
+**** Jira issue links
+
+Insert a link to an existing Jira Cloud issue. The link text contains the issue
+key and the summary (title) of the issue. Only the summary is read; the
+description and comments are not copied into Org. The issue is fetched once
+when the link is created, later title changes in Jira are not updated.
+
+Use ~SPC m l j~ to insert a link at point, or ~k~ / ~K~ in the capture menu to
+create a Jowo inbox task with the link as heading. The base URL is read from
+=docs/values/jira-base-url.txt= (private, not in Git). Credentials come from
+=auth-source= (=~/.authinfo.gpg=). A failed request signals an error and no
+malformed heading is created.
+
+Confluence pages work the same way with the same base URL and token. ~SPC m l C~
+inserts a link with the page title, taken from a page URL or a page ID.
+
+#+begin_src emacs-lisp
+(defvar nrbrt/jira-base-url-file
+  (expand-file-name "docs/values/jira-base-url.txt" doom-user-dir)
+  "File with the Jira Cloud base URL, kept out of this public configuration.")
+
+(after! jira
+  (when (file-readable-p nrbrt/jira-base-url-file)
+    (setq jira-base-url
+          (with-temp-buffer
+            (insert-file-contents nrbrt/jira-base-url-file)
+            (string-trim (buffer-string))))))
+
+(defun nrbrt/jira-issue-key-from-input (input)
+  "Return the Jira issue key found in INPUT, or nil."
+  (when (string-match "\\([A-Z][A-Z0-9]+-[0-9]+\\)" (upcase input))
+    (match-string 1 (upcase input))))
+
+(defun nrbrt/jira-issue-summary (key)
+  "Return the summary of the Jira issue KEY, or signal a `user-error'."
+  (require 'jira)
+  (let* ((response (jira-api-call "GET" (format "issue/%s" key)
+                                  :params '(("fields" . "summary"))
+                                  :sync t))
+         (data (and response (request-response-data response)))
+         (summary (alist-get 'summary (alist-get 'fields data))))
+    (unless summary
+      (user-error "No summary for %s (check URL, token and network)" key))
+    summary))
+
+(defun nrbrt/jira-issue-org-link ()
+  "Prompt for a Jira issue and return an Org link with its key and summary."
+  (require 'jira)
+  (let* ((input (read-string "Jira issue (key or URL): "))
+         (key (or (nrbrt/jira-issue-key-from-input input)
+                  (user-error "No Jira issue key in %s" input)))
+         (summary (replace-regexp-in-string
+                   "[][]" "" (nrbrt/jira-issue-summary key))))
+    (format "[[%s/browse/%s][%s %s]]" jira-base-url key key summary)))
+
+(defun nrbrt/jira-insert-issue-link ()
+  "Insert an Org link to a Jira issue at point."
+  (interactive)
+  (insert (nrbrt/jira-issue-org-link)))
+
+(defun nrbrt/confluence-page-id-from-input (input)
+  "Return the Confluence page ID found in INPUT, or nil.
+Accepts page URLs (.../pages/ID/...), viewpage.action?pageId=ID URLs
+and plain page IDs."
+  (let ((input (string-trim input)))
+    (cond ((string-match "/pages/\\([0-9]+\\)" input)
+           (match-string 1 input))
+          ((string-match "[?&]pageId=\\([0-9]+\\)" input)
+           (match-string 1 input))
+          ((string-match "\\`[0-9]+\\'" input)
+           input))))
+
+(defun nrbrt/atlassian-auth-header ()
+  "Return a Basic Authorization header for `jira-base-url' from auth-source."
+  (let* ((host (replace-regexp-in-string
+                "\\(\\`https?://\\|/+\\'\\)" "" jira-base-url))
+         (entry (car (auth-source-search :host host :require '(:user :secret))))
+         (user (plist-get entry :user))
+         (secret (plist-get entry :secret))
+         (token (if (functionp secret) (funcall secret) secret)))
+    (unless (and user token)
+      (user-error "No auth-source entry for %s" host))
+    (format "Basic %s" (base64-encode-string (concat user ":" token) t))))
+
+(defun nrbrt/confluence-page-title (id)
+  "Return the title of the Confluence page ID, or signal a `user-error'."
+  (require 'request)
+  (let* ((response (request
+                     (format "%s/wiki/api/v2/pages/%s" jira-base-url id)
+                     :headers `(("Authorization" . ,(nrbrt/atlassian-auth-header))
+                                ("Accept" . "application/json"))
+                     :parser 'json-read
+                     :sync t))
+         (title (and response (alist-get 'title (request-response-data response)))))
+    (unless title
+      (user-error "No Confluence page %s (check URL, token and network)" id))
+    title))
+
+(defun nrbrt/confluence-page-org-link ()
+  "Prompt for a Confluence page and return an Org link with its title."
+  (require 'jira)
+  (let* ((input (read-string "Confluence page (URL or page ID): "))
+         (id (or (nrbrt/confluence-page-id-from-input input)
+                 (user-error "No Confluence page ID in %s" input)))
+         (title (replace-regexp-in-string
+                 "[][]" "" (nrbrt/confluence-page-title id))))
+    (format "[[%s/wiki/pages/viewpage.action?pageId=%s][%s]]"
+            jira-base-url id title)))
+
+(defun nrbrt/confluence-insert-page-link ()
+  "Insert an Org link to a Confluence page at point."
+  (interactive)
+  (insert (nrbrt/confluence-page-org-link)))
+
+(map! :map org-mode-map
+      :localleader
+      (:prefix "l"
+       "j" #'nrbrt/jira-insert-issue-link
+       "C" #'nrbrt/confluence-insert-page-link))
 #+end_src
 
 **** Custom agenda commands
