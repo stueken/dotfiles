@@ -1,0 +1,15 @@
+# The bare repository itself
+.cfg
+
+# Secret safety net, valid in every directory
+*.env
+.env.*
+.authinfo*
+.netrc
+.ssh/
+.gnupg/
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+*.kdbx
