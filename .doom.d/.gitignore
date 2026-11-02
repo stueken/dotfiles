@@ -1,2 +1,5 @@
 # Private project context, synchronized separately via Syncthing.
 /docs/
+
+# agent-shell session transcripts; may contain private content.
+/.agent-shell/
