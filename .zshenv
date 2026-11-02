@@ -11,7 +11,7 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 export PATH=$PATH:"/opt/platform-tools"
 
 # Jowo GitLab API Personal Access token for db-react-ui 2.0.0
-export NPM_TOKEN=1xgP_vCuSfToTvxts6uG
+if [ -r "$HOME/.config/secrets/npm.env" ]; then . "$HOME/.config/secrets/npm.env"; fi
 
 # TODO not sure if of any use
 # Fix to access Python virtualenv from vim with zsh shell
