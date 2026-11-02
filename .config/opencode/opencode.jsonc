@@ -1,0 +1,75 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // General behavior
+  // Start new sessions in PLAN mode by default.
+  "default_agent": "plan",
+
+  // Notify about updates without installing them automatically.
+  "update": "notify",
+
+  // Disable sharing of OpenCode sessions.
+  "share": "disabled",
+
+  // Default model for everyday coding and maintenance tasks.
+  // More capable models can be selected per session.
+  // Individual values (provider, model, endpoint) live in private files under
+  // docs/values/ and are read with {file:...}. They are synchronized separately
+  // and never committed.
+  "model": "{file:./docs/values/model-default.txt}",
+
+  // AI providers
+  // Keep credentials outside this configuration file. The environment variable
+  // name, the endpoint and the model IDs come from docs/values/.
+  "providers": {
+    "{file:./docs/values/provider-id.txt}": {
+      "name": "{file:./docs/values/provider-name.txt}",
+      "env": ["{file:./docs/values/provider-env.txt}"],
+      "package": "@opencode/ai/providers/openai-compatible",
+
+      "settings": {
+        "baseURL": "{file:./docs/values/provider-base-url.txt}"
+      },
+
+      "models": {
+        // Role: everyday coding and configuration tasks.
+        "{file:./docs/values/model-default-id.txt}": {},
+
+        // Role: code review and independent validation.
+        "{file:./docs/values/model-review-id.txt}": {
+          "limit": {
+            "context": 131072
+          }
+        },
+
+        // Role: complex architecture and repository analysis.
+        "{file:./docs/values/model-planning-id.txt}": {
+          "limit": {
+            "context": 262144
+          }
+        }
+      }
+    }
+  },
+
+  // Global permission defaults
+  // Project-specific configurations may apply stricter rules.
+  // Approval is required before editing files or running commands.
+  "permissions": [
+    {
+      "action": "edit",
+      "resource": "*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "*",
+      "effect": "ask"
+    },
+    {
+      "action": "external_directory",
+      "resource": "*",
+      "effect": "ask"
+    }
+  ]
+}
